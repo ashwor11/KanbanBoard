@@ -227,10 +227,10 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AssignedDate")
+                    b.Property<DateTime?>("AssignedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("AssignedPersonId")
+                    b.Property<int?>("AssignedPersonId")
                         .HasColumnType("int");
 
                     b.Property<int>("BoardId")
@@ -242,17 +242,16 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("FinishDate")
+                    b.Property<DateTime?>("FinishDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsReassigned")
+                    b.Property<bool?>("IsReassigned")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
@@ -275,10 +274,13 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AssignedDate")
+                    b.Property<DateTime?>("AssignedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("AssignedPersonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BoardId")
                         .HasColumnType("int");
 
                     b.Property<int>("CardId")
@@ -293,6 +295,9 @@ namespace Persistence.Migrations
                     b.Property<bool>("IsReassigned")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsSubmitted")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("SubmitDate")
                         .HasColumnType("datetime2");
 
@@ -300,7 +305,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("AssignedPersonId");
 
-                    b.HasIndex("CardId");
+                    b.HasIndex("BoardId");
 
                     b.ToTable("CardDetails");
                 });
@@ -321,6 +326,10 @@ namespace Persistence.Migrations
 
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
+
+                    b.Property<string>("JobDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -431,9 +440,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.Concrete.Person", "AssignedPerson")
                         .WithMany("AssignedCards")
-                        .HasForeignKey("AssignedPersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssignedPersonId");
 
                     b.HasOne("Domain.Entities.Concrete.Board", "Board")
                         .WithMany("Cards")
@@ -454,13 +461,11 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Concrete.Card", "Card")
-                        .WithMany()
-                        .HasForeignKey("CardId")
+                    b.HasOne("Domain.Entities.Concrete.Board", null)
+                        .WithMany("CardDetails")
+                        .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Card");
 
                     b.Navigation("Person");
                 });
@@ -520,6 +525,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Concrete.Board", b =>
                 {
+                    b.Navigation("CardDetails");
+
                     b.Navigation("Cards");
 
                     b.Navigation("PersonBoards");

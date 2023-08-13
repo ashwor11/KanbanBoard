@@ -6,5 +6,13 @@ namespace Domain.Entities.Concrete;
 public class JobFeedback : Feedback
 {
     public int JobId { get; set; }
-    
+
+    public JobFeedback(string content) : base(content)
+    {
+    }
+
+    public JobFeedback()
+    {
+        
+    }
 }

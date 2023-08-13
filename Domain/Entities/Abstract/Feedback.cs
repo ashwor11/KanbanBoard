@@ -10,4 +10,14 @@ public abstract class Feedback : Entity
 
 
     public virtual Person Person { get; set; }
+
+    public Feedback(string content)
+    {
+        Content = content;
+    }
+
+    public Feedback()
+    {
+        
+    }
 }

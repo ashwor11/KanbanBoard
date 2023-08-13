@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Application.Pipelines.Authorization
 {
-    public interface IAuthorizableRequest
+    public interface ISecuredRequest
     {
         public string[] RequiredRoles { get; set; }
     }

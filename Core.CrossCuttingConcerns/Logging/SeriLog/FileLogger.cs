@@ -15,7 +15,7 @@ namespace Core.CrossCuttingConcerns.Logging.SeriLog
             FileLogConfiguration _fileLogConfiguration = fileLogConfiguration.Value ??
                                                          throw new Exception(SeriLogMessages.NullOptions);
 
-            string logPath = string.Format("{0},{1}", Directory.GetCurrentDirectory, _fileLogConfiguration.Path);
+            string logPath = string.Format("{0},{1}", Directory.GetCurrentDirectory(), _fileLogConfiguration.Path);
 
 
             Logger = new LoggerConfiguration()

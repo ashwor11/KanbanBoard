@@ -17,7 +17,7 @@ namespace Core.Persistence.Repositories
         protected TContext Context { get; }
         public EfRepositoryBase(TContext context)
         {
-            Context = Context;
+            Context = context;
         }
 
         public TEntity? Get(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include)

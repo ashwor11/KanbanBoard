@@ -40,18 +40,18 @@ public class KanbanDbContext : DbContext
         modelBuilder.Entity<PersonBoard>(personBoard =>
         {
             personBoard.HasKey(x => x.Id);
-            personBoard.HasOne(x => x.Board).WithMany(x => x.PersonBoards).HasForeignKey(pb => pb.BoardId);
-            personBoard.HasOne(pb => pb.Person).WithMany(p => p.PersonBoards).HasForeignKey(pb => pb.PersonId);
+            personBoard.HasOne(x => x.Board).WithMany(x => x.PersonBoards).HasForeignKey(pb => pb.BoardId).OnDelete(DeleteBehavior.Cascade);
+            personBoard.HasOne(pb => pb.Person).WithMany(p => p.PersonBoards).HasForeignKey(pb => pb.PersonId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Card>(card=>
         {
             card.HasKey(pc => pc.Id);
-            card.HasOne(c => c.AssignedPerson).WithMany(p => p.AssignedCards).HasForeignKey(pc => pc.AssignedPersonId);
+            card.HasOne(c => c.AssignedPerson).WithMany(p => p.AssignedCards).HasForeignKey(pc => pc.AssignedPersonId)
+                .IsRequired(false);
             card.HasOne(c => c.Board).WithMany(p => p.Cards).HasForeignKey(pc => pc.BoardId);
             card.HasMany(c => c.Feedbacks).WithOne().HasForeignKey(x => x.CardId);
             card.HasMany(c => c.Jobs).WithOne().HasForeignKey(j => j.CardId);
-
         });
 
         modelBuilder.Entity<Job>(job =>
@@ -75,9 +75,13 @@ public class KanbanDbContext : DbContext
 
         modelBuilder.Entity<CardDetails>(cardDetails =>
         {
-            cardDetails.HasOne(cd => cd.Card).WithMany().HasForeignKey(cd => cd.CardId);
             cardDetails.HasOne(cd => cd.Person).WithMany().HasForeignKey(cd => cd.AssignedPersonId)
                 .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<Board>(boards =>
+        {
+            boards.HasMany(x => x.CardDetails).WithOne().HasForeignKey(x => x.BoardId);
         });
 
 
