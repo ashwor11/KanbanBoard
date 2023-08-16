@@ -5,10 +5,3 @@ using Persistence.Contexts;
 
 namespace Persistence.Repositories;
 
-public class CardDetailsRepository : EfRepositoryBase<KanbanDbContext, CardDetails>, ICardDetailsRepository
-
-{
-    public CardDetailsRepository(KanbanDbContext context) : base(context)
-    {
-    }
-}

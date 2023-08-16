@@ -36,4 +36,34 @@ public class BoardBusinessRules
         if (!(person.Id == personId && person.Email == email))
             throw new BusinessException("Email and person id do not direct same person");
     }
+
+    public void DoesBoardAndTheCardExist(Board board, int cardId)
+    {
+        DoesBoardExist(board);
+        if (board.Cards.FirstOrDefault(x => x.Id == cardId) == null)
+            throw new BusinessException("Specified card does not exist.");
+    }
+
+    public void DoesBoardCardAndTheJobExist(Board board, int cardId, int jobId)
+    {
+        DoesBoardAndTheCardExist(board, cardId);
+        if (board.Cards.FirstOrDefault(x => x.Id == cardId).Jobs.FirstOrDefault(x=>x.Id == jobId) == null)
+            throw new BusinessException("Specified job does not exist.");
+    }
+
+    public void DoesBoardCardAndCardFeedbackExist(Board board, int cardId, int cardFeedbackId)
+    {
+        DoesBoardAndTheCardExist(board,cardId);
+        if (board.Cards.FirstOrDefault(x => x.Id == cardId).Feedbacks.FirstOrDefault(x => x.Id == cardFeedbackId) ==
+            null)
+            throw new BusinessException("Specified card feedback does not exist.");
+    }
+
+    public void DoesBoardCardJobAndTheJobFeedbackExist(Board board, int cardId, int jobId, int jobFeedbackId)
+    {
+        DoesBoardCardAndTheJobExist(board,cardId,jobId);
+        if (board.Cards.FirstOrDefault(x => x.Id == cardId).Jobs.FirstOrDefault(x => x.Id == jobId).Feedbacks.FirstOrDefault(x=>x.Id == jobFeedbackId) ==
+            null)
+            throw new BusinessException("Specified job feedback does not exist.");
+    }
 }

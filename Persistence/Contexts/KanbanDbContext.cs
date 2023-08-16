@@ -73,16 +73,7 @@ public class KanbanDbContext : DbContext
                 .HasForeignKey(o => o.OperationClaimId);
         });
 
-        modelBuilder.Entity<CardDetails>(cardDetails =>
-        {
-            cardDetails.HasOne(cd => cd.Person).WithMany().HasForeignKey(cd => cd.AssignedPersonId)
-                .OnDelete(DeleteBehavior.NoAction);
-        });
-
-        modelBuilder.Entity<Board>(boards =>
-        {
-            boards.HasMany(x => x.CardDetails).WithOne().HasForeignKey(x => x.BoardId);
-        });
+       
 
 
 

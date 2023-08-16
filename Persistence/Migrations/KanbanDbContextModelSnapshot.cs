@@ -174,7 +174,6 @@ namespace Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -207,7 +206,6 @@ namespace Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -266,50 +264,6 @@ namespace Persistence.Migrations
                     b.ToTable("Cards");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Concrete.CardDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("AssignedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("AssignedPersonId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BoardId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CardId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsReassigned")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSubmitted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("SubmitDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssignedPersonId");
-
-                    b.HasIndex("BoardId");
-
-                    b.ToTable("CardDetails");
-                });
-
             modelBuilder.Entity("Domain.Entities.Concrete.Job", b =>
                 {
                     b.Property<int>("Id")
@@ -328,7 +282,6 @@ namespace Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("JobDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -453,23 +406,6 @@ namespace Persistence.Migrations
                     b.Navigation("Board");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Concrete.CardDetails", b =>
-                {
-                    b.HasOne("Domain.Entities.Concrete.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("AssignedPersonId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Concrete.Board", null)
-                        .WithMany("CardDetails")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Person");
-                });
-
             modelBuilder.Entity("Domain.Entities.Concrete.Job", b =>
                 {
                     b.HasOne("Domain.Entities.Concrete.Card", null)
@@ -525,8 +461,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Concrete.Board", b =>
                 {
-                    b.Navigation("CardDetails");
-
                     b.Navigation("Cards");
 
                     b.Navigation("PersonBoards");

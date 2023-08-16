@@ -3,12 +3,13 @@ using Application.Features.Boards.Rules;
 using Application.Repositories;
 using Application.Services.Abstract;
 using AutoMapper;
+using Core.Application.Pipelines.Validation;
 using Domain.Entities.Concrete;
 using MediatR;
 
 namespace Application.Features.Boards.Commands.DeleteBoardCommand;
 
-public class DeleteBoardCommand : IRequest<DeletedBoardDto>
+public class DeleteBoardCommand : IRequest<DeletedBoardDto>, IValidationRequest
 {
     public int BoardId { get; set; }
     public int PersonId { get; set; }

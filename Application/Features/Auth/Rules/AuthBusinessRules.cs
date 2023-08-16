@@ -8,10 +8,12 @@ namespace Application.Features.Auth.Rules;
 public class AuthBusinessRules 
 {
     private readonly IPersonService _personService;
+    private readonly IPersonRepository _personRepository;
 
-    public AuthBusinessRules(IPersonService personService)
+    public AuthBusinessRules(IPersonService personService, IPersonRepository personRepository)
     {
         _personService = personService;
+        _personRepository = personRepository;
     }
 
     public async Task IsEmailAlreadyRegistered(string email)
@@ -27,4 +29,9 @@ public class AuthBusinessRules
     }
 
 
+    public async Task DoesPersonExist(int personId)
+    {
+        Person? person = await _personRepository.GetAsync(x => x.Id == personId);
+        if (person == null) throw new BusinessException("The specified person does not exist.");
+    }
 }

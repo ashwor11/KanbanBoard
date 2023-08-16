@@ -7,12 +7,17 @@ public class JobFeedback : Feedback
 {
     public int JobId { get; set; }
 
-    public JobFeedback(string content) : base(content)
+    public JobFeedback(int writtenByPersonId, string content) : base(writtenByPersonId, content)
     {
     }
 
     public JobFeedback()
     {
         
+    }
+
+    public void UpdateFeedback( string content)
+    {
+        Content = content;
     }
 }

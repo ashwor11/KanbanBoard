@@ -5,7 +5,7 @@ namespace Domain.Entities.Concrete;
 public class Job : Entity
 {
     public int CardId { get; set; }
-    public string JobDescription { get; set; }
+    public string? JobDescription { get; set; }
     public bool IsDone { get; set; }
     
 
@@ -16,14 +16,22 @@ public class Job : Entity
         Feedbacks = new List<JobFeedback>();
     }
 
-    public void AddFeedback()
+    public void ChangeDescriptionOfJob(int jobId, string description)
     {
-        Feedbacks.Add(new JobFeedback());
+        JobDescription = description;
+    }
+    public void MarkJobAsDone(int jobId, string description)
+    {
+        IsDone = true;
+    }
+    public void MarkJobAsUnDone(int jobId, string description)
+    {
+        IsDone = false;
     }
 
-    public void UpdateFeedback(int feedbackId, string content)
+    public void AddFeedback(int writtenByPersonId, string content)
     {
-        Feedbacks.First(x => x.Id == feedbackId).Content = content;
+        Feedbacks.Add(new JobFeedback(writtenByPersonId,content));
     }
     public void DeleteFeedback(int feedbackId)
     {

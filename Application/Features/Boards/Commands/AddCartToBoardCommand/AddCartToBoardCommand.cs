@@ -3,12 +3,13 @@ using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Rules;
 using Application.Repositories;
 using AutoMapper;
+using Core.Application.Pipelines.Validation;
 using Domain.Entities.Concrete;
 using MediatR;
 
 namespace Application.Features.Boards.Commands.AddCartToBoardCommand;
 
-public class AddCartToBoardCommand : IRequest<AddedCardDto>
+public class AddCartToBoardCommand : IRequest<AddedCardDto>, IValidationRequest
 {
     public CardToAddDto CardToAddDto { get; set; }
     public int PersonId { get; set; }

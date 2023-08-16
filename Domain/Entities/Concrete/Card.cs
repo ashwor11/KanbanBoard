@@ -27,32 +27,94 @@ public class Card : Entity
     }
 
 
+    public void ChangeCardName( string cardName)
+    {
+       Name = cardName;
+
+    }
+
+    public void AssignCardToPerson( int personId)
+    {
+        
+        AssignedPersonId = personId;
+        IsReassigned = false;
+        AssignedDate = DateTime.Now;
+        PullCardToToDo();
+
+
+    }
+
+    public void ReAssignCardToPerson(int personId)
+    {
+        
+        AssignedPersonId = personId;
+        AssignedDate = DateTime.Now;
+        IsReassigned = true;
+    }
+
+    public void AssignDueDate(DateTime date)
+    {
+        DueDate = date;
+    }
+
+    public void RemoveAssignedPerson()
+    {
+       AssignedPersonId = null;
+       AssignedDate = null;
+    }
+
+    public void RemoveDueDate()
+    {
+        DueDate = null;
+    }
+
+    public void PullCardToBacklog()
+    {
+        Status = CardStatus.Backlog;
+
+    }
+
+    public void PullCardToToDo()
+    {
+        Status = CardStatus.ToDo;
+    }
+
+    public void PullCardToInProgress()
+    {
+        Status = CardStatus.InProgress;
+    }
+
+    public void PullCardToReview()
+    {
+        Status = CardStatus.Review;
+
+
+    }
+
+    public void PullCardToDone()
+    {
+        Status = CardStatus.Done;
+        FinishDate = DateTime.Now;
+
+
+    }
+
+
     public void AddJob()
     {
         Jobs.Add(new Job());
     }
 
-    public void ChangeDescriptionOfJob(int jobId, string description)
-    {
-        Jobs.First(x=>x.Id == jobId).JobDescription = description;
-    }
-    public void MarkJobAsDone(int jobId, string description)
-    {
-        Jobs.First(x => x.Id == jobId).IsDone = true;
-    }
-    public void MarkJobAsUnDone(int jobId, string description)
-    {
-        Jobs.First(x => x.Id == jobId).IsDone = false;
-    }
+    
     public void RemoveJob(int jobId)
     {
         Job job = Jobs.First(x => x.Id == jobId);
         job = null;
     }
 
-    public void AddFeedback()
+    public void AddFeedback(int writtenByPersonId, string content)
     {
-        Feedbacks.Add(new CardFeedback());
+        Feedbacks.Add(new CardFeedback(writtenByPersonId,content));
     }
 
     public void UpdateFeedback(int feedbackId, string content)
