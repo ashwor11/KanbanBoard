@@ -1,5 +1,6 @@
 using Application;
 using Core.CrossCuttingConcerns;
+using Core.CrossCuttingConcerns.Exceptions;
 using Core.Security;
 using Core.Security.Encryption.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,12 +20,18 @@ builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddCors(options =>options.AddPolicy("CorsPolicy",
+    builder => builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader()));
+
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(o =>
 {
     o.TokenValidationParameters = new TokenValidationParameters()
     {
+        ClockSkew = TimeSpan.Zero,
         ValidateAudience = true,
         ValidateIssuer = true,
         ValidateLifetime = true,
@@ -77,10 +84,6 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
-
-
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -90,11 +93,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if (app.Environment.IsDevelopment())
+    app.ConfigureCustomExceptionMiddleware();
+
+
+
+
+
 app.UseHttpsRedirection();
+
+app.UseRouting();
+app.UseCors("CorsPolicy");
+
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

@@ -1,4 +1,5 @@
 ﻿using Application.Features.Auth.Rules;
+using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Models;
 using Application.Repositories;
 using AutoMapper;
@@ -8,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Boards.Queries.GetPersonsAllBoards;
 
-public class GetPersonsAllBoardsQuery : IRequest<GetPersonsAllBoardsModel>
+public class GetPersonsAllBoardsQuery : IRequest<List<GetPersonsBoardDto>>
 {
     public int PersonId { get; set; }
 
-    public class GetPersonsAllBoardsQueryHandler : IRequestHandler<GetPersonsAllBoardsQuery, GetPersonsAllBoardsModel>
+    public class GetPersonsAllBoardsQueryHandler : IRequestHandler<GetPersonsAllBoardsQuery, List<GetPersonsBoardDto>>
     {
         private readonly IPersonBoardRepository _personBoardRepository;
         private readonly IMapper _mapper;
@@ -23,15 +24,15 @@ public class GetPersonsAllBoardsQuery : IRequest<GetPersonsAllBoardsModel>
             _mapper = mapper;
         }
 
-        public async Task<GetPersonsAllBoardsModel> Handle(GetPersonsAllBoardsQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetPersonsBoardDto>> Handle(GetPersonsAllBoardsQuery request, CancellationToken cancellationToken)
         {
             List<Board> boards = _personBoardRepository
                 .GetListAsync(x => x.PersonId == request.PersonId, include: x => x.Include(x => x.Board)).Result.Items
                 .Select(x => x.Board).ToList();
 
-            GetPersonsAllBoardsModel getPersonsAllBoardsModel = _mapper.Map<GetPersonsAllBoardsModel>(boards);
+            List<GetPersonsBoardDto> getPersonsBoardDtos = _mapper.Map<List<GetPersonsBoardDto>>(boards);
 
-            return getPersonsAllBoardsModel;
+            return getPersonsBoardDtos;
 
         }
 

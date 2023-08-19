@@ -35,7 +35,7 @@ namespace Persistence.Migrations
                 oldType: "nvarchar(max)");
 
             migrationBuilder.AlterColumn<string>(
-                name: "Description",
+                name: "JobDescription",
                 table: "Boards",
                 type: "nvarchar(max)",
                 nullable: true,
@@ -77,7 +77,7 @@ namespace Persistence.Migrations
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<string>(
-                name: "Description",
+                name: "JobDescription",
                 table: "Boards",
                 type: "nvarchar(max)",
                 nullable: false,

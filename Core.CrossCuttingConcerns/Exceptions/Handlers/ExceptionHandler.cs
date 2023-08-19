@@ -1,31 +1,32 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 
 namespace Core.CrossCuttingConcerns.Exceptions.Handlers
 {
     public abstract class ExceptionHandler
     {
-        public Task HandleExceptionAsync(Exception exception)
+        public Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             if (exception is BusinessException businessException)
-                return HandleException(businessException);
+                return HandleException(context, businessException);
 
             else if (exception is ValidationException validationException)
-                return HandleException(validationException);
+                return HandleException(context, validationException);
 
             else if (exception is AuthorizationException authorizationException)
-                return HandleException(authorizationException);
+                return HandleException(context, authorizationException);
 
             else if (exception is NotFoundException notFoundException)
-                return HandleException(notFoundException);
+                return HandleException(context, notFoundException);
 
             else
-                return HandleException(exception);
+                return HandleException(context, exception);
         }
 
-        protected abstract Task HandleException(BusinessException businessException);
-        protected abstract Task HandleException(ValidationException validationException);
-        protected abstract Task HandleException(AuthorizationException authorizationException);
-        protected abstract Task HandleException(NotFoundException notFoundException);
-        protected abstract Task HandleException(Exception exception);
+        protected abstract Task HandleException(HttpContext context, BusinessException businessException);
+        protected abstract Task HandleException(HttpContext context, ValidationException validationException);
+        protected abstract Task HandleException(HttpContext context, AuthorizationException authorizationException);
+        protected abstract Task HandleException(HttpContext context, NotFoundException notFoundException);
+        protected abstract Task HandleException(HttpContext context, Exception exception);
     }
 }

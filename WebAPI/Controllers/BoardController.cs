@@ -168,12 +168,12 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("board/{boardId}")]
+        [HttpGet("{boardId}")]
         public async Task<IActionResult> GetWholeBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
             GetBoardAsWholeCommand getBoardAsWholeCommand = new() { PersonId = personId, BoardId = boardId };
-            GetWholeBoardDto getWholeBoardDto = await Mediator.Send(getBoardAsWholeCommand);
+            GetBoardByIdDto getWholeBoardDto = await Mediator.Send(getBoardAsWholeCommand);
             return Ok(getWholeBoardDto);
         }
 
@@ -302,16 +302,16 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("/boards")]
+        [HttpGet("boards")]
         public async Task<IActionResult> GetPersonsBoard()
         {
             int personId = GetPersonId();
 
             GetPersonsAllBoardsQuery getPersonsAllBoardsQuery = new() { PersonId = personId };
 
-            GetPersonsAllBoardsModel getPersonsAllBoardsModel = await Mediator.Send(getPersonsAllBoardsQuery);
+            List<GetPersonsBoardDto> getPersonsBoardDtos = await Mediator.Send(getPersonsAllBoardsQuery);
 
-            return Ok(getPersonsAllBoardsModel);
+            return Ok(getPersonsBoardDtos);
         }
 
 

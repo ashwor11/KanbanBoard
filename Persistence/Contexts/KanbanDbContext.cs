@@ -52,11 +52,13 @@ public class KanbanDbContext : DbContext
             card.HasOne(c => c.Board).WithMany(p => p.Cards).HasForeignKey(pc => pc.BoardId);
             card.HasMany(c => c.Feedbacks).WithOne().HasForeignKey(x => x.CardId);
             card.HasMany(c => c.Jobs).WithOne().HasForeignKey(j => j.CardId);
+
         });
 
         modelBuilder.Entity<Job>(job =>
         {
             job.HasMany(j => j.Feedbacks).WithOne().HasForeignKey(feedback => feedback.JobId);
+            job.Property(x => x.JobDescription).HasColumnName("JobDescription");
         });
 
         modelBuilder.Entity<RefreshToken>(refreshToken =>
@@ -73,7 +75,13 @@ public class KanbanDbContext : DbContext
                 .HasForeignKey(o => o.OperationClaimId);
         });
 
-       
+        modelBuilder.Entity<Board>(board =>
+        {
+            board.Property(x => x.CreatorUserId).HasColumnName("CreatorUserId");
+        });
+
+
+
 
 
 

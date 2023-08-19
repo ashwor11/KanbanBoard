@@ -2,6 +2,6 @@
 
 public class GetPersonsBoardDto
 {
-    public int BoardId { get; set; }
-    public string BoardName { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

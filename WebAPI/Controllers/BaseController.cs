@@ -1,5 +1,6 @@
 ﻿using System.Security.Authentication;
 using System.Security.Claims;
+using Core.CrossCuttingConcerns.Exceptions;
 using Core.Security.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +26,7 @@ namespace WebAPI.Controllers
         private void IfUserIsNotAuthenticatedThrowException()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
-                throw new AuthenticationException("You should be logged in for this request.");
+                throw new AuthorizationException("You should be logged in for this request.");
         }
     }
 }

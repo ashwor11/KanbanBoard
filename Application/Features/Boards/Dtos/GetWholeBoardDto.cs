@@ -32,7 +32,7 @@ public class GetCardDto
 public class GetJobDto
 {
     public int Id { get; set; }
-    public string JobDescription { get; set; }
+    public string Description { get; set; }
     public bool IsDone { get; set; }
     public virtual List<GetJobFeedbackDto> Feedbacks { get; set; }
 
