@@ -11,11 +11,11 @@ using MediatR;
 
 namespace Application.Features.Auth.Commands.LoginCommand;
 
-public class LoginCommand : IRequest<AccessToken>
+public class LoginCommand : IRequest<LoggedInPersonDto>
 {
     public PersonToLoginDto PersonToLoginDto { get; set; }  
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, AccessToken>, IValidationRequest
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoggedInPersonDto>, IValidationRequest
     {
         private readonly IPersonRepository _personRepository;
         private readonly IPersonService _personService;
@@ -30,7 +30,7 @@ public class LoginCommand : IRequest<AccessToken>
             _tokenHelper = tokenHelper;
         }
 
-        public async Task<AccessToken> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<LoggedInPersonDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             await _authBusinessRules.IsEmailAlreadyRegistered(request.PersonToLoginDto.Email);
 
@@ -43,9 +43,19 @@ public class LoginCommand : IRequest<AccessToken>
 
             IList<OperationClaim> operationClaims = await _personService.GetOperationClaimsForPerson(person);
 
-            AccessToken accessToken = _tokenHelper.CreateToken(person, operationClaims);
+            
 
-            return accessToken;
+            AccessToken accessToken = _tokenHelper.CreateToken(person, operationClaims);
+            LoggedInPersonDto loggedInPersonDto = new()
+            {
+                Id = person.Id,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Email = person.Email,
+                AccessToken = accessToken
+            };
+
+            return loggedInPersonDto;
         }
     }
 }

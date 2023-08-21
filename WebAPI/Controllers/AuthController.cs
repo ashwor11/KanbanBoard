@@ -26,8 +26,8 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] PersonToLoginDto personToLoginDto)
         {
             LoginCommand loginCommmand = new LoginCommand() { PersonToLoginDto = personToLoginDto };
-            AccessToken accessToken = await Mediator.Send(loginCommmand);
-            return Ok(accessToken);
+            LoggedInPersonDto loggedInPersonDto = await Mediator.Send(loginCommmand);
+            return Ok(loggedInPersonDto);
         }
     }
 }
