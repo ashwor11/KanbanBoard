@@ -18,6 +18,8 @@ using Application.Features.Boards.Commands.DeleteCardFeedbackCommand;
 using Application.Features.Boards.Commands.DeleteJobCommand;
 using Application.Features.Boards.Commands.DeleteJobFeedbackCommand;
 using Application.Features.Boards.Commands.InvitePersonToBoardCommand;
+using Application.Features.Boards.Commands.MarkJobAsDone;
+using Application.Features.Boards.Commands.MarkJobAsUnDoneCommand;
 using Application.Features.Boards.Commands.RemoveAssignedDueDateFromCardCommand;
 using Application.Features.Boards.Commands.RemoveAssignedPersonFromCardCommand;
 using Application.Features.Boards.Dtos;
@@ -53,7 +55,7 @@ namespace WebAPI.Controllers
             return Ok(deletedBoardDto);
         }
 
-        [HttpPost("board/{boardId}/invitePersonToBoard")]
+        [HttpPost("{boardId}/invitePersonToBoard")]
         public async Task<IActionResult> InvitePersonToBoard([FromRoute] int boardId, [FromBody] string invitedPersonEmail)
         {
             int personId = GetPersonId();
@@ -78,7 +80,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("board/{boardId}/addCard")]
+        [HttpGet("{boardId}/addCard")]
         public async Task<IActionResult> AddCardToBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
@@ -89,7 +91,7 @@ namespace WebAPI.Controllers
             return Ok(addedCardDto);
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/changeName")]
+        [HttpPost("{boardId}/cards/{cardId}/changeName")]
         public async Task<IActionResult> ChangeCardName([FromRoute] int boardId, [FromRoute] int cardId, [FromBody] string name)
         {
             int personId = GetPersonId();
@@ -99,7 +101,7 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/changeStatus")]
+        [HttpPost("{boardId}/cards/{cardId}/changeStatus")]
         public async Task<IActionResult> ChangeCardStatus([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] string status)
         {
@@ -113,7 +115,7 @@ namespace WebAPI.Controllers
 
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/assignPerson")]
+        [HttpPost("{boardId}/cards/{cardId}/assignPerson")]
         public async Task<IActionResult> AssignPersonToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] int assignedPersonId)
         {
@@ -127,7 +129,7 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("board/{boardId}/cards/{cardId}/removeAssignedPerson")]
+        [HttpGet("{boardId}/cards/{cardId}/removeAssignedPerson")]
         public async Task<IActionResult> RemoveAssignedPersonToCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
             int personId = GetPersonId();
@@ -140,7 +142,7 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/assignDueDate")]
+        [HttpPost("{boardId}/cards/{cardId}/assignDueDate")]
         public async Task<IActionResult> AssignDueDateToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] DateTime dueDate)
         {
@@ -154,7 +156,7 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("board/{boardId}/cards/{cardId}/removeAssignedDueDate")]
+        [HttpGet("{boardId}/cards/{cardId}/removeAssignedDueDate")]
         public async Task<IActionResult> RemoveAssignedDueDateFromCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
 
@@ -177,7 +179,7 @@ namespace WebAPI.Controllers
             return Ok(getWholeBoardDto);
         }
 
-        [HttpGet("board/{boardId}/cards/{cardId}/addJob")]
+        [HttpGet("{boardId}/cards/{cardId}/addJob")]
         public async Task<IActionResult> AddJobToCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
             int personId = GetPersonId();
@@ -187,7 +189,7 @@ namespace WebAPI.Controllers
             return Ok(addedJobDto);
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/addFeedback")]
+        [HttpPost("{boardId}/cards/{cardId}/addFeedback")]
         public async Task<IActionResult> AddFeedbackToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] string content)
         {
@@ -202,14 +204,14 @@ namespace WebAPI.Controllers
             return Ok(addedCardFeedbackDto);
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/jobs/{jobId}/addFeedback")]
-        public async Task<IActionResult> AddFeedbackToJob([FromRoute] int boardId, [FromRoute] int cardId, [FromRoute] int jobId,
+        [HttpPost("{boardId}/jobs/{jobId}/addFeedback")]
+        public async Task<IActionResult> AddFeedbackToJob([FromRoute] int boardId, [FromRoute] int jobId,
             [FromBody] string content)
         {
             int personId = GetPersonId();
             AddFeedbackToJobCommand addFeedbackToJobCommand = new()
             {
-                JobFeedbackToAddDto = new() { BoardId = boardId, CardId = cardId, Content = content, JobId = jobId},
+                JobFeedbackToAddDto = new() { BoardId = boardId, Content = content, JobId = jobId},
                 PersonId = personId
             };
 
@@ -217,21 +219,21 @@ namespace WebAPI.Controllers
             return Ok(addedJobFeedbackDto);
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/jobs/{jobId}/changeDescription")]
-        public async Task<IActionResult> ChangeJobDescription([FromRoute] int boardId, [FromRoute] int cardId, [FromRoute] int jobId,
-            [FromBody] string jobDescription)
+        [HttpPost("{boardId}/jobs/{jobId}/changeDescription")]
+        public async Task<IActionResult> ChangeJobDescription([FromRoute] int boardId, [FromRoute] int jobId,
+            [FromBody] string description)
         {
             int personId = GetPersonId();
             ChangeJobDescriptionCommand changeJobDescriptionCommand= new()
             {
-                ChangeJobDescriptionDto = new() { BoardId = boardId, CardId = cardId, JobDescription = jobDescription, JobId = jobId },
+                ChangeJobDescriptionDto = new() { BoardId = boardId, JobDescription = description, JobId = jobId },
                 PersonId = personId
             };
             await Mediator.Send(changeJobDescriptionCommand);
             return Ok();
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/feedbacks/{cardFeedbackId}/changeFeedback")]
+        [HttpPost("{boardId}/cards/{cardId}/feedbacks/{cardFeedbackId}/changeFeedback")]
         public async Task<IActionResult> ChangeCardFeedback([FromRoute] int boardId, [FromRoute] int cardId,
             [FromRoute] int cardFeedbackId,
             [FromBody] string content)
@@ -246,7 +248,7 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("board/{boardId}/cards/{cardId}/jobs/{jobId}/feedbacks/{jobFeedbackId}/changeFeedback")]
+        [HttpPost("{boardId}/cards/{cardId}/jobs/{jobId}/feedbacks/{jobFeedbackId}/changeFeedback")]
         public async Task<IActionResult> ChangeJobFeedback([FromRoute] int boardId, [FromRoute] int cardId,
             [FromRoute] int jobFeedbackId,
             [FromRoute] int jobId,
@@ -312,6 +314,25 @@ namespace WebAPI.Controllers
             List<GetPersonsBoardDto> getPersonsBoardDtos = await Mediator.Send(getPersonsAllBoardsQuery);
 
             return Ok(getPersonsBoardDtos);
+        }
+        [HttpGet("{boardId}/jobs/{jobId}/markAsDone")]
+        public async Task<IActionResult> MarkJobAsDone([FromRoute] int boardId, [FromRoute] int jobId){
+            int personId = GetPersonId();
+
+            MarkJobAsDoneCommand markJobAsDoneCommand = new()
+                { PersonId = personId, MarkJobDto = new() { BoardId = boardId, JobId = jobId } };
+            await Mediator.Send(markJobAsDoneCommand);
+            return Ok();
+        }
+        [HttpGet("{boardId}/jobs/{jobId}/markAsUnDone")]
+        public async Task<IActionResult> MarkJobAsUnDone([FromRoute] int boardId, [FromRoute] int jobId)
+        {
+            int personId = GetPersonId();
+
+            MarkJobAsUnDoneCommand markJobAsUnDoneCommand = new()
+                { PersonId = personId, MarkJobDto = new() { BoardId = boardId, JobId = jobId } };
+            await Mediator.Send(markJobAsUnDoneCommand);
+            return Ok();
         }
 
 

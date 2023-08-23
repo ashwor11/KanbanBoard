@@ -26,10 +26,12 @@ public class ChangeJobDescriptionCommand : IRequest
         public async Task Handle(ChangeJobDescriptionCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.ChangeJobDescriptionDto.BoardId);
-            _boardBusinessRules.DoesBoardCardAndTheJobExist(board,request.ChangeJobDescriptionDto.CardId,request.ChangeJobDescriptionDto.JobId);
+            _boardBusinessRules.DoesBoardExist(board);
 
-            Job job = board.Cards.First(x => x.Id == request.ChangeJobDescriptionDto.CardId).Jobs
-                .First(x => x.Id == request.ChangeJobDescriptionDto.JobId);
+
+            Job job = board.Cards.SelectMany(x => x.Jobs)
+                .FirstOrDefault(x => x.Id == request.ChangeJobDescriptionDto.JobId);
+            _boardBusinessRules.IsNull(job);
 
             job.JobDescription = request.ChangeJobDescriptionDto.JobDescription;
 

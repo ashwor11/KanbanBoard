@@ -7,6 +7,5 @@ public class ChangeJobDescriptionCommandValidator : AbstractValidator<ChangeJobD
     public ChangeJobDescriptionCommandValidator()
     {
         RuleFor(x => x.ChangeJobDescriptionDto.BoardId).NotNull().NotEmpty();
-        RuleFor(x => x.ChangeJobDescriptionDto.CardId).NotNull().NotEmpty();
     }
 }

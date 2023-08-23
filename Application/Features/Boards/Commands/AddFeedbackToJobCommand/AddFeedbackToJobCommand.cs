@@ -1,4 +1,5 @@
-﻿using Application.Features.Boards.Dtos;
+﻿using System.Security.Cryptography.X509Certificates;
+using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Rules;
 using Application.Repositories;
 using AutoMapper;
@@ -28,10 +29,10 @@ public class AddFeedbackToJobCommand : IRequest<AddedJobFeedbackDto>
         public async Task<AddedJobFeedbackDto> Handle(AddFeedbackToJobCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.JobFeedbackToAddDto.BoardId);
-            _boardBusinessRules.DoesBoardCardAndTheJobExist(board,request.JobFeedbackToAddDto.CardId,request.JobFeedbackToAddDto.JobId);
-
-            Job job = board.Cards.First(x => x.Id == request.JobFeedbackToAddDto.CardId).Jobs
-                .First(x => x.Id == request.JobFeedbackToAddDto.JobId);
+            _boardBusinessRules.DoesBoardExist(board);
+            Job job = board.Cards.SelectMany(x => x.Jobs)
+                .FirstOrDefault(x => x.Id == request.JobFeedbackToAddDto.JobId);
+            _boardBusinessRules.IsNull(job);
 
             job.AddFeedback(request.PersonId,request.JobFeedbackToAddDto.Content);
 

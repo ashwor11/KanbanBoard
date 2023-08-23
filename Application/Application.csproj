@@ -27,6 +27,8 @@
     <Folder Include="Features\Boards\Commands\DeleteCardFeedbackCommand\" />
     <Folder Include="Features\Boards\Commands\DeleteJobFeedbackCommand\" />
     <Folder Include="Features\Boards\Commands\DeleteJobCommand\" />
+    <Folder Include="Features\Boards\Commands\MarkJobAsDoneCommand\" />
+    <Folder Include="Features\Boards\Commands\MarkJobAsUnDoneCommand\" />
     <Folder Include="Features\Boards\Commands\RemoveAssignedDueDateFromCardCommand\" />
     <Folder Include="Features\Boards\Enums\" />
     <Folder Include="Features\Boards\Messages\" />

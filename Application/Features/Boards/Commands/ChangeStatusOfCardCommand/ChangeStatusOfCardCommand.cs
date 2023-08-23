@@ -39,7 +39,7 @@ public class ChangeStatusOfCardCommand : IRequest, IValidationRequest
             switch (status)
             {
                 case "ToDo":
-                    
+                    card.Status = CardStatus.ToDo;
                     break;
                 case "InProgress":
                     card.Status = CardStatus.InProgress;

@@ -66,4 +66,10 @@ public class BoardBusinessRules
             null)
             throw new BusinessException("Specified job feedback does not exist.");
     }
+
+    public void IsNull(object obj)
+    {
+        if (obj == null)
+            throw new BusinessException($" The specified {obj.GetType().Name} is not found");
+    }
 }
