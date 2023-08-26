@@ -12,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.AllowEmptyInputInBodyModelBinding = true;
+});
 
 builder.Services.AddCoreCCSServiceRegistration(builder.Configuration);
 builder.Services.AddCoreSecurityService(builder.Configuration);

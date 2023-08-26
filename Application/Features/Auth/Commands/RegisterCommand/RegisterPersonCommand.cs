@@ -11,11 +11,11 @@ using MediatR;
 
 namespace Application.Features.Auth.Commands.RegisterCommand;
 
-public class RegisterPersonCommand : IRequest<AccessToken>, IValidationRequest
+public class RegisterPersonCommand : IRequest<RegisteredPersonDto>, IValidationRequest
 {
     public PersonToRegisterDto PersonToRegisterDto { get; set; }
 
-    public class RegisterPersonCommandHandler : IRequestHandler<RegisterPersonCommand, AccessToken>
+    public class RegisterPersonCommandHandler : IRequestHandler<RegisterPersonCommand, RegisteredPersonDto>
     {
         private readonly IPersonRepository _personRepository;
         private readonly ITokenHelper _tokenHelper;
@@ -30,7 +30,7 @@ public class RegisterPersonCommand : IRequest<AccessToken>, IValidationRequest
             _authBusinessRules = authBusinessRules;
         }
 
-        public async Task<AccessToken> Handle(RegisterPersonCommand request, CancellationToken cancellationToken)
+        public async Task<RegisteredPersonDto> Handle(RegisterPersonCommand request, CancellationToken cancellationToken)
         {
             await _authBusinessRules.IsEmailFreeToTaken(request.PersonToRegisterDto.Email);
 
@@ -47,7 +47,16 @@ public class RegisterPersonCommand : IRequest<AccessToken>, IValidationRequest
 
             AccessToken accessToken = _tokenHelper.CreateToken(person, new List<OperationClaim>());
 
-            return accessToken;
+            RegisteredPersonDto registeredPersonDto = new()
+            {
+                Id = person.Id,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Email = person.Email,
+                AccessToken = accessToken
+            };
+
+            return registeredPersonDto;
 
         }
     }

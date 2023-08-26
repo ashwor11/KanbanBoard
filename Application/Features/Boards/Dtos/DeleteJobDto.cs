@@ -3,6 +3,5 @@
 public class DeleteJobDto
 {
     public int BoardId { get; set; }
-    public int CardId { get; set; }
     public int JobId { get; set; }
 }

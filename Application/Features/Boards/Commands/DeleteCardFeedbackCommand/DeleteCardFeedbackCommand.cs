@@ -26,10 +26,14 @@ public class DeleteCardFeedbackCommand : IRequest, IValidationRequest
         public async Task Handle(DeleteCardFeedbackCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.DeleteCardFeedbackDto.BoardId);
-            _boardBusinessRules.DoesBoardCardAndCardFeedbackExist(board, request.DeleteCardFeedbackDto.CardId, request.DeleteCardFeedbackDto.CardFeedbackId);
+            _boardBusinessRules.DoesBoardExist(board);
 
-            Card card = board.Cards.First(x => x.Id == request.DeleteCardFeedbackDto.CardId);
-            CardFeedback cardFeedback = card.Feedbacks.First(x=>x.Id == request.DeleteCardFeedbackDto.CardFeedbackId);
+            Card card = board.Cards
+                .Where(x => x.Feedbacks.Any(x => x.Id == request.DeleteCardFeedbackDto.CardFeedbackId))
+                .FirstOrDefault();
+            _boardBusinessRules.IsNull(card);
+            CardFeedback cardFeedback = card.Feedbacks.FirstOrDefault(x => x.Id == request.DeleteCardFeedbackDto.CardFeedbackId);
+
             card.Feedbacks.Remove(cardFeedback);
 
             await _boardRepository.UpdateAsync(board);

@@ -7,8 +7,6 @@ public class ChangeJobFeedbackCommandValidator : AbstractValidator<ChangeJobFeed
     public ChangeJobFeedbackCommandValidator()
     {
         RuleFor(x => x.ChangeJobFeedbackDto.BoardId).NotEmpty().NotNull();
-        RuleFor(x => x.ChangeJobFeedbackDto.CardId).NotNull().NotEmpty();
-        RuleFor(x => x.ChangeJobFeedbackDto.JobId).NotNull().NotEmpty();
         RuleFor(x => x.ChangeJobFeedbackDto.JobFeedbackId).NotNull().NotEmpty();
 
     }

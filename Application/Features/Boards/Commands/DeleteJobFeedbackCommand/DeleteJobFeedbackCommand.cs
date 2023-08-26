@@ -26,9 +26,13 @@ public class DeleteJobFeedbackCommand : IRequest, IValidationRequest
         public async Task Handle(DeleteJobFeedbackCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.DeleteJobFeedbackDto.BoardId);
-            _boardBusinessRules.DoesBoardCardJobAndTheJobFeedbackExist(board, request.DeleteJobFeedbackDto.CardId, request.DeleteJobFeedbackDto.JobId, request.DeleteJobFeedbackDto.JobFeedbackId);
-            Card card = board.Cards.First(x => x.Id == request.DeleteJobFeedbackDto.CardId);
-            Job job = card.Jobs.First(x => x.Id == request.DeleteJobFeedbackDto.JobId);
+            _boardBusinessRules.DoesBoardExist(board);
+
+            Job job = board.Cards.SelectMany(x => x.Jobs).FirstOrDefault(x =>
+                x.Feedbacks.Any(x => x.Id == request.DeleteJobFeedbackDto.JobFeedbackId));
+                
+            _boardBusinessRules.IsNull(job);
+            
             JobFeedback jobFeedbackToDelete = job.Feedbacks.First(x => x.Id == request.DeleteJobFeedbackDto.JobFeedbackId);
 
             job.Feedbacks.Remove(jobFeedbackToDelete);

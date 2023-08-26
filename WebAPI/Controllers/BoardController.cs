@@ -56,12 +56,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("{boardId}/invitePersonToBoard")]
-        public async Task<IActionResult> InvitePersonToBoard([FromRoute] int boardId, [FromBody] string invitedPersonEmail)
+        public async Task<IActionResult> InvitePersonToBoard([FromRoute] int boardId, [FromBody] InvitePersonToBoardBody invitePersonToBoardBody)
         {
             int personId = GetPersonId();
-            InvitePersonToBoardDto invitePersonToBoardDto = new(){BoardId = boardId,InvitedPersonEmail = invitedPersonEmail, };
+            InvitePersonToBoardDto invitePersonToBoardDto = new(){BoardId = boardId,InvitedPersonEmail = invitePersonToBoardBody.InvitedPersonEmail, };
             InvitePersonToBoardCommand invitePersonToBoardCommand = new()
-                { PersonId = personId, InvitePersonToBoardDto = invitePersonToBoardDto, InvitationAcceptUrlPrefix = HttpContext.Request.Host.Value + "/acceptInvitation"};
+                { PersonId = personId, InvitePersonToBoardDto = invitePersonToBoardDto, InvitationAcceptUrlPrefix = invitePersonToBoardBody.InvitationAcceptUrlPrefix };
 
                 string result = await Mediator.Send(invitePersonToBoardCommand);
 
@@ -248,16 +248,15 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("{boardId}/cards/{cardId}/jobs/{jobId}/feedbacks/{jobFeedbackId}/changeFeedback")]
-        public async Task<IActionResult> ChangeJobFeedback([FromRoute] int boardId, [FromRoute] int cardId,
+        [HttpPost("{boardId}/jobFeedbacks/{jobFeedbackId}/changeFeedback")]
+        public async Task<IActionResult> ChangeJobFeedback([FromRoute] int boardId, 
             [FromRoute] int jobFeedbackId,
-            [FromRoute] int jobId,
             [FromBody] string content)
         {
             int personId = GetPersonId();
             ChangeJobFeedbackCommand changeJobFeedbackCommand = new()
             {
-                ChangeJobFeedbackDto = new() { BoardId = boardId, CardId = cardId, Content = content, JobId = jobId, JobFeedbackId = jobFeedbackId},
+                ChangeJobFeedbackDto = new() { BoardId = boardId, JobFeedbackId = jobFeedbackId},
                 PersonId = personId
             };
             await Mediator.Send(changeJobFeedbackCommand);
@@ -271,37 +270,37 @@ namespace WebAPI.Controllers
             DeleteCardCommand deleteCardCommand = new()
                 { DeleteCardDto = new() { BoardId = boardId, CardId = cardId }, PersonId = personId };
             await Mediator.Send(deleteCardCommand);
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("{boardId}/cards/{cardId}/feedbacks/{cardFeedbackId}/delete")]
-        public async Task<IActionResult> DeleteCard([FromRoute] int boardId, [FromRoute] int cardId, [FromRoute] int cardFeedbackId)
+        [HttpDelete("{boardId}/cardFeedbacks/{cardFeedbackId}/delete")]
+        public async Task<IActionResult> DeleteCardFeedback([FromRoute] int boardId, [FromRoute] int cardFeedbackId)
         {
             int personId = GetPersonId();
             DeleteCardFeedbackCommand deleteCardFeedbackCommand = new()
-                { DeleteCardFeedbackDto = new() { BoardId = boardId, CardId = cardId, CardFeedbackId = cardFeedbackId}, PersonId = personId };
+                { DeleteCardFeedbackDto = new() { BoardId = boardId, CardFeedbackId = cardFeedbackId}, PersonId = personId };
             await Mediator.Send(deleteCardFeedbackCommand);
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("{boardId}/cards/{cardId}/jobs/{jobId}/delete")]
-        public async Task<IActionResult> DeleteJob([FromRoute] int boardId, [FromRoute] int cardId, [FromRoute] int jobId)
+        [HttpDelete("{boardId}/jobs/{jobId}/delete")]
+        public async Task<IActionResult> DeleteJob([FromRoute] int boardId, [FromRoute] int jobId)
         {
             int personId = GetPersonId();
             DeleteJobCommand deleteJobCommand = new()
-                { DeleteJobDto = new() { BoardId = boardId, CardId = cardId, JobId = jobId}, PersonId = personId };
+                { DeleteJobDto = new() { BoardId = boardId, JobId = jobId}, PersonId = personId };
             await Mediator.Send(deleteJobCommand);
-            return Ok();
+            return NoContent();
         }
 
-        [HttpDelete("{boardId}/cards/{cardId}/jobs/{jobId}/feedbacks/{jobFeedbackId}/delete")]
-        public async Task<IActionResult> DeleteJobFeedback([FromRoute] int boardId, [FromRoute] int cardId, [FromRoute] int jobId, [FromRoute] int jobFeedbackId)
+        [HttpDelete("{boardId}/jobFeedbacks/{jobFeedbackId}/delete")]
+        public async Task<IActionResult> DeleteJobFeedback([FromRoute] int boardId,[FromRoute] int jobFeedbackId)
         {
             int personId = GetPersonId();
             DeleteJobFeedbackCommand deleteJobFeedbackCommand = new()
-                { DeleteJobFeedbackDto = new() { BoardId = boardId, CardId = cardId, JobId = jobId,JobFeedbackId = jobFeedbackId}, PersonId = personId };
+                { DeleteJobFeedbackDto = new() { BoardId = boardId,JobFeedbackId = jobFeedbackId}, PersonId = personId };
             await Mediator.Send(deleteJobFeedbackCommand);
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet("boards")]
@@ -338,7 +337,11 @@ namespace WebAPI.Controllers
 
 
 
-
+        public class InvitePersonToBoardBody
+        {
+            public string InvitationAcceptUrlPrefix { get; set; }
+            public string InvitedPersonEmail { get; set; }
+        }
 
 
     }

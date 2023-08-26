@@ -25,12 +25,13 @@ public class ChangeJobFeedbackCommand : IRequest
         public async Task Handle(ChangeJobFeedbackCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.ChangeJobFeedbackDto.BoardId);
-            _boardBusinessRules.DoesBoardCardJobAndTheJobFeedbackExist(board, request.ChangeJobFeedbackDto.CardId,
-                request.ChangeJobFeedbackDto.JobId, request.ChangeJobFeedbackDto.JobFeedbackId);
+            _boardBusinessRules.DoesBoardExist(board);
 
-            JobFeedback jobFeedback = board.Cards.First(x => x.Id == request.ChangeJobFeedbackDto.CardId).Jobs
-                .First(x => x.Id == request.ChangeJobFeedbackDto.JobId).Feedbacks
-                .First(x => x.Id == request.ChangeJobFeedbackDto.JobFeedbackId);
+            JobFeedback jobFeedback = board.Cards.SelectMany(x => x.Jobs).SelectMany(x => x.Feedbacks)
+                .FirstOrDefault(x => x.Id == request.ChangeJobFeedbackDto.JobFeedbackId);
+            _boardBusinessRules.IsNull(jobFeedback);
+
+            
             jobFeedback.Content = request.ChangeJobFeedbackDto.Content;
 
             await _boardRepository.UpdateAsync(board);

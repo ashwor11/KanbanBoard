@@ -18,8 +18,8 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Register([FromBody] PersonToRegisterDto personToRegisterDto)
         {
             RegisterPersonCommand command = new RegisterPersonCommand() { PersonToRegisterDto = personToRegisterDto };
-            AccessToken accessToken = await Mediator.Send(command);
-            return Ok(accessToken);
+            RegisteredPersonDto registeredPersonDto = await Mediator.Send(command);
+            return Ok(registeredPersonDto);
         }
 
         [HttpPost("login")]

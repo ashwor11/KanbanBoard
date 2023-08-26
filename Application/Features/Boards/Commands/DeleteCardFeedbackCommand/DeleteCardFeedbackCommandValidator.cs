@@ -7,7 +7,6 @@ public class DeleteCardFeedbackCommandValidator : AbstractValidator<DeleteCardFe
     public DeleteCardFeedbackCommandValidator()
     {
         RuleFor(x => x.DeleteCardFeedbackDto.BoardId).NotEmpty().NotNull();
-        RuleFor(x => x.DeleteCardFeedbackDto.CardId).NotEmpty().NotNull();
         RuleFor(x => x.DeleteCardFeedbackDto.CardFeedbackId).NotEmpty().NotNull();
 
     }

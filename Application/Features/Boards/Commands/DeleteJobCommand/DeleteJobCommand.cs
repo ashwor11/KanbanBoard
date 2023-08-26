@@ -26,8 +26,12 @@ public class DeleteJobCommand : IRequest, IValidationRequest
         public async Task Handle(DeleteJobCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.DeleteJobDto.BoardId);
-            _boardBusinessRules.DoesBoardCardAndTheJobExist(board,request.DeleteJobDto.CardId, request.DeleteJobDto.JobId);
-            Card card = board.Cards.First(x => x.Id == request.DeleteJobDto.CardId);
+            _boardBusinessRules.DoesBoardExist(board);
+
+            Card card = board.Cards
+                .Where(x => x.Jobs.Any(x => x.Id == request.DeleteJobDto.JobId))
+                .FirstOrDefault();
+            _boardBusinessRules.IsNull(card);
             Job jobToDelete = card.Jobs.First(x => x.Id == request.DeleteJobDto.JobId);
 
             card.Jobs.Remove(jobToDelete);
