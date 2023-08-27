@@ -8,6 +8,7 @@ using Application.Features.Boards.Commands.AssignCardToPersonCommand;
 using Application.Features.Boards.Commands.AssignDueDateToCardCommand;
 using Application.Features.Boards.Commands.ChangeCardFeedBackCommand;
 using Application.Features.Boards.Commands.ChangeCardNameCommand;
+using Application.Features.Boards.Commands.ChangeColorOfCardCommand;
 using Application.Features.Boards.Commands.ChangeJobDescriptionCommand;
 using Application.Features.Boards.Commands.ChangeJobFeedbackCommand;
 using Application.Features.Boards.Commands.ChangeStatusOfCardCommand;
@@ -331,6 +332,22 @@ namespace WebAPI.Controllers
             MarkJobAsUnDoneCommand markJobAsUnDoneCommand = new()
                 { PersonId = personId, MarkJobDto = new() { BoardId = boardId, JobId = jobId } };
             await Mediator.Send(markJobAsUnDoneCommand);
+            return Ok();
+        }
+
+        [HttpPost("{boardId}/cards/{cardId}/changeColor")]
+        public async Task<IActionResult> ChangeCardColor([FromRoute] int boardId, [FromRoute] int cardId,
+            [FromBody] string colorInHex)
+        {
+            int personId = GetPersonId();
+            ChangeCardColorCommand changeCardColorCommand = new()
+            {
+                PersonId = personId,
+                ChangeCardColorDto = new ChangeCardColorDto()
+                    { BoardId = boardId, CardId = cardId, ColorInHex = colorInHex }
+            };
+
+            await Mediator.Send(changeCardColorCommand);
             return Ok();
         }
 

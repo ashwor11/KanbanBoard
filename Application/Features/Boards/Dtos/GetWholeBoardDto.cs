@@ -20,7 +20,7 @@ public class GetCardDto
     public bool? IsReassigned { get; set; }
     public CardStatus Status { get; set; }
     public int BoardId { get; set; }
-    public Color Color { get; set; }
+    public String Color { get; set; }
     public DateTime? AssignedDate { get; set; }
     public DateTime? DueDate { get; set; }
     public DateTime? FinishDate { get; set; }

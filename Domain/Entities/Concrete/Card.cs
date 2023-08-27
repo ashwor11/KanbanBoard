@@ -10,7 +10,7 @@ public class Card : Entity
     public bool? IsReassigned { get; set; }
     public CardStatus Status { get; set; }
     public int BoardId { get; set; }
-    public Color Color { get; set; }
+    public string Color { get; set; }
     public DateTime? AssignedDate { get; set; }
     public DateTime? DueDate { get; set; }
     public DateTime? FinishDate { get; set; }
@@ -21,7 +21,7 @@ public class Card : Entity
     public Card()
     {
         Status = CardStatus.Backlog;
-        Color = Color.Grey;
+        Color = "#b1bbc9";
         Feedbacks = new List<CardFeedback>();
         Jobs = new List<Job>();
     }
@@ -126,6 +126,11 @@ public class Card : Entity
     {
         CardFeedback feedback = Feedbacks.First(x => x.Id == feedbackId);
         feedback = null;
+    }
+
+    public void ChangeColor(string colorInHex)
+    {
+        Color = colorInHex;
     }
 
 }

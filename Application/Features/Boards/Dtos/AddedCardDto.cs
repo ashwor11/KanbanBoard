@@ -8,6 +8,6 @@ public class AddedCardDto
     public string Name { get; set; }
     public CardStatus Status { get; set; } = CardStatus.Backlog;
     public int BoardId { get; set; }
-    public Color Color { get; set; } = Color.Grey;
+    public String Color { get; set; }
     public DateTime CreatedDate { get; set; }
 }

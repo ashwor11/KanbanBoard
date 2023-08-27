@@ -33,7 +33,7 @@ public class AssignCardToPersonCommand : IRequest , IValidationRequest
             _boardBusinessRules.DoesBoardAndTheCardExist(board,request.AssignCardToPersonDto.CardId);
             await _authBusinessRules.DoesPersonExist(request.AssignCardToPersonDto.PersonId);
             Card card = board.Cards.First(x => x.Id == request.AssignCardToPersonDto.CardId);
-            card.AssignCardToPerson(request.PersonId);
+            card.AssignCardToPerson(request.AssignCardToPersonDto.PersonId);
 
             await _boardRepository.UpdateAsync(board);
         }
