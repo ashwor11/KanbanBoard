@@ -36,6 +36,8 @@ public class DeleteJobFeedbackCommand : IRequest, IValidationRequest
             JobFeedback jobFeedbackToDelete = job.Feedbacks.First(x => x.Id == request.DeleteJobFeedbackDto.JobFeedbackId);
 
             job.Feedbacks.Remove(jobFeedbackToDelete);
+
+            await _boardRepository.UpdateAsync(board);
         }
     }
 }

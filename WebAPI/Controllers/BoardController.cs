@@ -175,8 +175,8 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetWholeBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
-            GetBoardAsWholeCommand getBoardAsWholeCommand = new() { PersonId = personId, BoardId = boardId };
-            GetBoardByIdDto getWholeBoardDto = await Mediator.Send(getBoardAsWholeCommand);
+            GetBoardAsWholeQuery getBoardAsWholeQuery = new() { PersonId = personId, BoardId = boardId };
+            GetBoardByIdDto getWholeBoardDto = await Mediator.Send(getBoardAsWholeQuery);
             return Ok(getWholeBoardDto);
         }
 
@@ -188,7 +188,7 @@ namespace WebAPI.Controllers
                 { AddJobToCardDto = new() { BoardId = boardId, CardId = cardId }, PersonId = personId };
             AddedJobDto addedJobDto = await Mediator.Send(addJobToCardCommand);
             return Ok(addedJobDto);
-        }
+        } 
 
         [HttpPost("{boardId}/cards/{cardId}/addFeedback")]
         public async Task<IActionResult> AddFeedbackToCard([FromRoute] int boardId, [FromRoute] int cardId,

@@ -14,6 +14,7 @@ namespace Application.Features.Auth.Commands.RegisterCommand;
 public class RegisterPersonCommand : IRequest<RegisteredPersonDto>, IValidationRequest
 {
     public PersonToRegisterDto PersonToRegisterDto { get; set; }
+    public string IpAddress { get; set; }
 
     public class RegisterPersonCommandHandler : IRequestHandler<RegisterPersonCommand, RegisteredPersonDto>
     {
@@ -21,13 +22,15 @@ public class RegisterPersonCommand : IRequest<RegisteredPersonDto>, IValidationR
         private readonly ITokenHelper _tokenHelper;
         private readonly IMapper _mapper;
         private readonly AuthBusinessRules _authBusinessRules;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public RegisterPersonCommandHandler(IPersonRepository personRepository, ITokenHelper tokenHelper, IMapper mapper, AuthBusinessRules authBusinessRules)
+        public RegisterPersonCommandHandler(IPersonRepository personRepository, ITokenHelper tokenHelper, IMapper mapper, AuthBusinessRules authBusinessRules, IRefreshTokenRepository refreshTokenRepository)
         {
             _personRepository = personRepository;
             _tokenHelper = tokenHelper;
             _mapper = mapper;
             _authBusinessRules = authBusinessRules;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<RegisteredPersonDto> Handle(RegisterPersonCommand request, CancellationToken cancellationToken)
@@ -46,6 +49,9 @@ public class RegisterPersonCommand : IRequest<RegisteredPersonDto>, IValidationR
             await _personRepository.CreateAsync(person);
 
             AccessToken accessToken = _tokenHelper.CreateToken(person, new List<OperationClaim>());
+            RefreshToken refreshToken = _tokenHelper.CreateRefreshToken(person, request.IpAddress);
+            await _refreshTokenRepository.CreateAsync(refreshToken);
+
 
             RegisteredPersonDto registeredPersonDto = new()
             {
@@ -53,7 +59,8 @@ public class RegisterPersonCommand : IRequest<RegisteredPersonDto>, IValidationR
                 FirstName = person.FirstName,
                 LastName = person.LastName,
                 Email = person.Email,
-                AccessToken = accessToken
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token
             };
 
             return registeredPersonDto;

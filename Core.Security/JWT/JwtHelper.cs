@@ -56,10 +56,14 @@ namespace Core.Security.JWT
 
         }
 
-        public bool IsTokenExpired(AccessToken accessToken)
+        public bool IsTokenExpired(string token)
         {
-            if (DateTime.UtcNow > accessToken.ExpireTime) return true;
-            return false;
+           if (string.IsNullOrEmpty(token))
+                return true;
+
+           JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+           handler.ValidateToken(token, _tokenValidationParameters, out SecurityToken validatedToken);
+           return validatedToken.ValidTo < DateTime.UtcNow;
         }
 
         private JwtSecurityToken CreateJwtSecurityToken(User user, TokenOptions tokenOptions, IList<OperationClaim> operationClaims)

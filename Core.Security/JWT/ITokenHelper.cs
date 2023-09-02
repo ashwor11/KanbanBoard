@@ -13,6 +13,6 @@ namespace Core.Security.JWT
         AccessToken CreateToken(User user, IList<OperationClaim> operationClaims);
 
         RefreshToken CreateRefreshToken(User user, string ipAdress);
-        bool IsTokenExpired(AccessToken accessToken);
+        bool IsTokenExpired(string token);
     }
 }

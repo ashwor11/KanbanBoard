@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Features\Auth\Enums\" />
     <Folder Include="Features\Auth\Messages\" />
-    <Folder Include="Features\Auth\Dtos\" />
     <Folder Include="Features\Auth\Profiles\" />
     <Folder Include="Features\Auth\Rules\" />
     <Folder Include="Features\Auth\Queries\" />
@@ -34,7 +33,6 @@
     <Folder Include="Features\Boards\Messages\" />
     <Folder Include="Features\Boards\Models\" />
     <Folder Include="Features\Boards\Profiles\" />
-    <Folder Include="Features\Boards\Queries\GetBoardAsWholeCommand\" />
     <Folder Include="Features\Boards\Rules\" />
     <Folder Include="Features\Cards\Commands\" />
     <Folder Include="Features\Cards\Dtos\" />

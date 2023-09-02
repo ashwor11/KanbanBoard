@@ -14,6 +14,7 @@ namespace Application.Features.Auth.Commands.LoginCommand;
 public class LoginCommand : IRequest<LoggedInPersonDto>
 {
     public PersonToLoginDto PersonToLoginDto { get; set; }  
+    public string IpAddress { get; set; }
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoggedInPersonDto>, IValidationRequest
     {
@@ -21,13 +22,15 @@ public class LoginCommand : IRequest<LoggedInPersonDto>
         private readonly IPersonService _personService;
         private readonly AuthBusinessRules _authBusinessRules;
         private readonly ITokenHelper _tokenHelper;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public LoginCommandHandler(IPersonRepository personRepository, IPersonService personService, AuthBusinessRules authBusinessRules, ITokenHelper tokenHelper)
+        public LoginCommandHandler(IPersonRepository personRepository, IPersonService personService, AuthBusinessRules authBusinessRules, ITokenHelper tokenHelper, IRefreshTokenRepository refreshTokenRepository)
         {
             _personRepository = personRepository;
             _personService = personService;
             _authBusinessRules = authBusinessRules;
             _tokenHelper = tokenHelper;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<LoggedInPersonDto> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -46,13 +49,16 @@ public class LoginCommand : IRequest<LoggedInPersonDto>
             
 
             AccessToken accessToken = _tokenHelper.CreateToken(person, operationClaims);
+            RefreshToken refreshToken = _tokenHelper.CreateRefreshToken(person, request.IpAddress);
+            _refreshTokenRepository.Create(refreshToken);
             LoggedInPersonDto loggedInPersonDto = new()
             {
                 Id = person.Id,
                 FirstName = person.FirstName,
                 LastName = person.LastName,
                 Email = person.Email,
-                AccessToken = accessToken
+                AccessToken = accessToken,
+                RefreshToken = refreshToken.Token
             };
 
             return loggedInPersonDto;

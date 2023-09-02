@@ -36,6 +36,18 @@ namespace Core.Security.Entities
             RevokedReason = revokedReason;
         }
 
+        public void Revoke(string? revokedByIp = null, string? replacedByToken = null, string? revokedReason = null)
+        {
+            if (revokedByIp != null)
+                RevokedByIp = revokedByIp;
+            if (replacedByToken != null)
+                ReplacedByToken = replacedByToken;
+            if (revokedReason != null)
+                RevokedReason = revokedReason;
+                
+            Revoked = DateTime.UtcNow;
+        }
+
 
 
 

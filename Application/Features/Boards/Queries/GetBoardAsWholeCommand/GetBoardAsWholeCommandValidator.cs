@@ -2,7 +2,7 @@
 
 namespace Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 
-public class GetBoardAsWholeCommandValidator : AbstractValidator<GetBoardAsWholeCommand>
+public class GetBoardAsWholeCommandValidator : AbstractValidator<GetBoardAsWholeQuery>
 {
     public GetBoardAsWholeCommandValidator()
     {

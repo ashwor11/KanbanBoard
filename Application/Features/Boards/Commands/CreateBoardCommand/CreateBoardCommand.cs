@@ -8,11 +8,10 @@ using MediatR;
 
 namespace Application.Features.Boards.Commands.CreateBoardCommand;
 
-public class CreateBoardCommand : IRequest<CreatedBoardDto>, IValidationRequest, ISecuredRequest
+public class CreateBoardCommand : IRequest<CreatedBoardDto>, IValidationRequest 
 {
     public BoardToCreateDto BoardToCreateDto { get; set; }
     public int PersonId { get; set; }
-    public string[] RequiredRoles { get; set; } = Array.Empty<string>();
 
     public class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, CreatedBoardDto>
     {

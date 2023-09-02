@@ -28,5 +28,11 @@ namespace WebAPI.Controllers
             if (!HttpContext.User.Identity.IsAuthenticated)
                 throw new AuthorizationException("You should be logged in for this request.");
         }
+
+        protected string GetIpAddress()
+        {
+            return HttpContext.Connection.RemoteIpAddress!.ToString();
+           
+        }
     }
 }

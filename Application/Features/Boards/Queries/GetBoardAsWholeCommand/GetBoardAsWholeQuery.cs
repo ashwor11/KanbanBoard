@@ -9,12 +9,12 @@ using MediatR;
 
 namespace Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 
-public class GetBoardAsWholeCommand : IRequest<GetBoardByIdDto>, IValidationRequest
+public class GetBoardAsWholeQuery : IRequest<GetBoardByIdDto>, IValidationRequest
 {
     public int BoardId { get; set; }
     public int PersonId { get; set; }
 
-    public class GetBoardAsWholeCommandHandler : IRequestHandler<GetBoardAsWholeCommand, GetBoardByIdDto>
+    public class GetBoardAsWholeCommandHandler : IRequestHandler<GetBoardAsWholeQuery, GetBoardByIdDto>
     {
         private readonly IBoardRepository _boardRepository;
         private readonly BoardBusinessRules _boardBusinessRules;
@@ -27,7 +27,7 @@ public class GetBoardAsWholeCommand : IRequest<GetBoardByIdDto>, IValidationRequ
             _mapper = mapper;
         }
 
-        public async Task<GetBoardByIdDto> Handle(GetBoardAsWholeCommand request, CancellationToken cancellationToken)
+        public async Task<GetBoardByIdDto> Handle(GetBoardAsWholeQuery request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardWithPersons(request.BoardId);
             _boardBusinessRules.DoesBoardExist(board);
