@@ -27,7 +27,8 @@ public class GetPersonsAllBoardsQuery : IRequest<List<GetPersonsBoardDto>>
         public async Task<List<GetPersonsBoardDto>> Handle(GetPersonsAllBoardsQuery request, CancellationToken cancellationToken)
         {
             List<Board> boards = _personBoardRepository
-                .GetListAsync(x => x.PersonId == request.PersonId, include: x => x.Include(x => x.Board)).Result.Items
+                .GetListAsync(x => x.PersonId == request.PersonId, include: x => x.Include(x => x.Board), size: 99
+                ).Result.Items
                 .Select(x => x.Board).ToList();
 
             List<GetPersonsBoardDto> getPersonsBoardDtos = _mapper.Map<List<GetPersonsBoardDto>>(boards);

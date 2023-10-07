@@ -40,9 +40,9 @@ public class Card : Entity
         IsReassigned = false;
         AssignedDate = DateTime.Now;
         PullCardToToDo();
-
-
     }
+
+   
 
     public void ReAssignCardToPerson(int personId)
     {

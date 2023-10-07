@@ -18,6 +18,8 @@ public class Board : Entity, IAggregateRoot
         Cards = new List<Card>();
     }
 
+    
+
    
 
     

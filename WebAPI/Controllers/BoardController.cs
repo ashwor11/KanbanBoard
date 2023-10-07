@@ -24,10 +24,8 @@ using Application.Features.Boards.Commands.MarkJobAsUnDoneCommand;
 using Application.Features.Boards.Commands.RemoveAssignedDueDateFromCardCommand;
 using Application.Features.Boards.Commands.RemoveAssignedPersonFromCardCommand;
 using Application.Features.Boards.Dtos;
-using Application.Features.Boards.Models;
 using Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 using Application.Features.Boards.Queries.GetPersonsAllBoards;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers

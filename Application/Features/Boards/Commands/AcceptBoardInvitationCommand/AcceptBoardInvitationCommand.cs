@@ -41,6 +41,7 @@ public class AcceptBoardInvitationCommand : IRequest<string>, IValidationRequest
             (int boardId, string email) = ValidateToken(request.InvitationToken);
             Person person = await _personService.GetPersonWithEmail(email);
             _boardBusinessRules.DoPersonIdAndEmailDirectSamePerson(person, request.PersonId, email);
+            _boardBusinessRules.DoesPersonAlreadyAcceptedInvitation(person, boardId);
 
             PersonBoard personBoard = new() { BoardId = boardId, PersonId = person.Id };
 

@@ -24,7 +24,7 @@ public class PersonService : IPersonService
 
     public async Task<Person?> GetPersonWithEmail(string email)
     {
-        Person person = await _personRepository.GetAsync(predicate:x => x.Email == email)!;
+        Person person = await _personRepository.GetAsync(predicate:x => x.Email == email, include: p => p.Include(p => p.PersonBoards))!;
         return person;
     }
 

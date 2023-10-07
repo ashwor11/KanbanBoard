@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using System.Security.Authentication;
+using Application.Repositories;
 using Core.CrossCuttingConcerns.Exceptions;
 using Domain.Entities.Concrete;
 
@@ -34,7 +35,7 @@ public class BoardBusinessRules
     public void DoPersonIdAndEmailDirectSamePerson(Person person, int personId, string email)
     {
         if (!(person.Id == personId && person.Email == email))
-            throw new BusinessException("Email and person id do not direct same person");
+            throw new AuthenticationException("Email and person id do not direct same person");
     }
 
     public void DoesBoardAndTheCardExist(Board board, int cardId)
@@ -65,6 +66,12 @@ public class BoardBusinessRules
         if (board.Cards.FirstOrDefault(x => x.Id == cardId).Jobs.FirstOrDefault(x => x.Id == jobId).Feedbacks.FirstOrDefault(x=>x.Id == jobFeedbackId) ==
             null)
             throw new BusinessException("Specified job feedback does not exist.");
+    }
+
+    public void DoesPersonAlreadyAcceptedInvitation(Person person, int boardId)
+    {
+        if (person.PersonBoards.FirstOrDefault(x => x.BoardId == boardId) != null)
+            throw new BusinessException("Already accepted invitation.");
     }
 
     public void IsNull(object obj)

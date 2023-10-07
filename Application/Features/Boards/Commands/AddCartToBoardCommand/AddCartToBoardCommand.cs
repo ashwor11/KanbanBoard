@@ -35,6 +35,7 @@ public class AddCartToBoardCommand : IRequest<AddedCardDto>, IValidationRequest
 
             board = await _boardRepository.UpdateAsync(board);
             Card addedCard = board.Cards![^1];
+            
 
             AddedCardDto addedCardDto = _mapper.Map<AddedCardDto>(addedCard);
             return addedCardDto;
