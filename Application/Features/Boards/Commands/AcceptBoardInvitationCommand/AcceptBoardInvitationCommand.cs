@@ -59,7 +59,15 @@ public class AcceptBoardInvitationCommand : IRequest<string>, IValidationRequest
             JwtSecurityTokenHandler securityTokenHandler = new JwtSecurityTokenHandler();
 
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
-            ClaimsPrincipal claims = securityTokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            ClaimsPrincipal claims;
+            try
+            {
+                claims = securityTokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            }
+            catch (Exception e)
+            {
+                throw new BadHttpRequestException("Not valid token");
+            }
             if (!claims.HasClaim(x => x.Type == "BoardId") || !claims.HasClaim(x => x.Type == "ReceiverEmail"))
                 throw new BadHttpRequestException("Not valid token");
 
@@ -67,6 +75,9 @@ public class AcceptBoardInvitationCommand : IRequest<string>, IValidationRequest
                 claims.Claims.FirstOrDefault(x => x.Type == "ReceiverEmail").Value);
 
         }
+
+        
+
 
         private TokenValidationParameters GetTokenValidationParameters()
         {

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MediatR.Behaviors.Authorization.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace Core.CrossCuttingConcerns.Exceptions.Handlers
@@ -18,6 +19,8 @@ namespace Core.CrossCuttingConcerns.Exceptions.Handlers
 
             else if (exception is NotFoundException notFoundException)
                 return HandleException(context, notFoundException);
+            else if (exception is UnauthorizedException unauthorizedException)
+                return HandleException(context, unauthorizedException);
 
             else
                 return HandleException(context, exception);
@@ -27,6 +30,7 @@ namespace Core.CrossCuttingConcerns.Exceptions.Handlers
         protected abstract Task HandleException(HttpContext context, ValidationException validationException);
         protected abstract Task HandleException(HttpContext context, AuthorizationException authorizationException);
         protected abstract Task HandleException(HttpContext context, NotFoundException notFoundException);
+        protected abstract Task HandleException(HttpContext context, UnauthorizedException unauthorizedException);
         protected abstract Task HandleException(HttpContext context, Exception exception);
     }
 }

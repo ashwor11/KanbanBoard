@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MediatR.Behaviors.Authorization.Exceptions;
 
 namespace Core.CrossCuttingConcerns.Exceptions.Handlers
 {
@@ -60,6 +61,13 @@ namespace Core.CrossCuttingConcerns.Exceptions.Handlers
         {
             context.Response.StatusCode = StatusCodes.Status404NotFound;
             string details = new NotFoundProblemDetails(notFoundException.Message).AsJson();
+            return context.Response.WriteAsync(details);
+        }
+
+        protected override Task HandleException(HttpContext context, UnauthorizedException unauthorizedException)
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            string details = new AuthorizationProblemDetails(unauthorizedException.Message).AsJson();
             return context.Response.WriteAsync(details);
         }
 

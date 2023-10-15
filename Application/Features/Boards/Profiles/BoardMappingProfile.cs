@@ -36,7 +36,7 @@ public class BoardMappingProfile : Profile
         {
             var cards = board.Cards;
 
-            List<Card> backlogCards = cards.Where(card => card.Status == CardStatus.Backlog).ToList();
+            List<Card> backlogCards =  cards.Where(card => card.Status == CardStatus.Backlog).ToList();
             List<Card> toDoCards = cards.Where(card => card.Status == CardStatus.ToDo).ToList();
             List<Card> inProgressCards = cards.Where(card => card.Status == CardStatus.InProgress).ToList();
             List<Card> reviewCards = cards.Where(card => card.Status == CardStatus.Review).ToList();
