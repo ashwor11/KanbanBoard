@@ -7,7 +7,7 @@ public class ChangeCardNameCommandAuthorizer : AbstractRequestAuthorizer<ChangeC
 {
     public override void BuildPolicy(ChangeCardNameCommand request)
     {
-        UseRequirement(new UserMustBeCreatedBoardRequirement()
+        UseRequirement(new PersonMustBeAMemberOfBoardRequirement()
         {
             BoardId = request.ChangeCardNameDto.BoardId,
             PersonId = request.PersonId

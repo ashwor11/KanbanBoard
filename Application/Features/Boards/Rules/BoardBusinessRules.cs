@@ -79,4 +79,10 @@ public class BoardBusinessRules
         if (obj == null)
             throw new BusinessException($" The specified {obj.GetType().Name} is not found");
     }
+
+    public void IsPersonAMemberOfBoard(Board board, int requestPersonId)
+    {
+         if (board.PersonBoards.FirstOrDefault(x => x.PersonId == requestPersonId) == null)
+             throw new BusinessException("You should be the member of the board to do this operation");
+    }
 }

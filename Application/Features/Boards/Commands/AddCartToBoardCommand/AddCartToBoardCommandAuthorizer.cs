@@ -7,7 +7,7 @@ public class AddCartToBoardCommandAuthorizer : AbstractRequestAuthorizer<AddCart
 {
     public override void BuildPolicy(AddCartToBoardCommand request)
     {
-        UseRequirement(new UserMustBeCreatedBoardRequirement()
+        UseRequirement(new PersonMustBeAMemberOfBoardRequirement()
         {
             BoardId = request.CardToAddDto.BoardId, PersonId = request.PersonId
         });

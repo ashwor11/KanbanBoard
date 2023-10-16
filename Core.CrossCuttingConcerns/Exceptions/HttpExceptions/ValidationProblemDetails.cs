@@ -11,7 +11,7 @@ namespace Core.CrossCuttingConcerns.Exceptions.HttpExceptions
         {
             Title = "Validation Error";
             Detail = detail;
-            Status = StatusCodes.Status403Forbidden;
+            Status = StatusCodes.Status400BadRequest;
             Type = "Validation Error. Invalid input type for the entity";
             Failures = failures;
             Instance = "";

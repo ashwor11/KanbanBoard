@@ -7,11 +7,10 @@ public class ChangeStatusOfCardAuthorizer : AbstractRequestAuthorizer<ChangeStat
 {
     public override void BuildPolicy(ChangeStatusOfCardCommand request)
     {
-        UseRequirement(new PersonMustBeCreatedBoardOrAssignedToCardRequirement()
+        UseRequirement(new PersonMustBeAMemberOfBoardRequirement()
         {
             BoardId = request.ChangeCardStatusDto.BoardId,
             PersonId = request.PersonId,
-            CardId = request.ChangeCardStatusDto.CardId
         });
     }
 }

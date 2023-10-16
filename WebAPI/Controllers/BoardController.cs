@@ -19,6 +19,7 @@ using Application.Features.Boards.Commands.DeleteCardFeedbackCommand;
 using Application.Features.Boards.Commands.DeleteJobCommand;
 using Application.Features.Boards.Commands.DeleteJobFeedbackCommand;
 using Application.Features.Boards.Commands.InvitePersonToBoardCommand;
+using Application.Features.Boards.Commands.LeaveBoardCommand;
 using Application.Features.Boards.Commands.MarkJobAsDone;
 using Application.Features.Boards.Commands.MarkJobAsUnDoneCommand;
 using Application.Features.Boards.Commands.RemoveAssignedDueDateFromCardCommand;
@@ -45,7 +46,7 @@ namespace WebAPI.Controllers
             return Ok(createdBoardDto);
         }
 
-        [HttpDelete("delete/{boardId}")]
+        [HttpDelete("{boardId}/delete")]
         public async Task<IActionResult> DeleteBoard([FromRoute]int boardId)
         {
             int personId = GetPersonId();
@@ -348,6 +349,16 @@ namespace WebAPI.Controllers
             await Mediator.Send(changeCardColorCommand);
             return Ok();
         }
+
+        [HttpGet("{boardId}/leave")]
+        public async   Task<IActionResult> LeaveTable([FromRoute] int boardId)
+        {
+            int personId = GetPersonId();
+            LeaveBoardCommand leaveBoardCommand = new()
+            { LeaveBoardDto = new() { BoardId = boardId }, PersonId = personId };
+            await Mediator.Send(leaveBoardCommand);
+            return Ok();
+        }   
 
 
 
