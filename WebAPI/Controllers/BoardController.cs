@@ -1,4 +1,5 @@
-﻿using Application.Features.Boards.Commands;
+﻿using System.Net.Mime;
+using Application.Features.Boards.Commands;
 using Application.Features.Boards.Commands.AcceptBoardInvitationCommand;
 using Application.Features.Boards.Commands.AddCartToBoardCommand;
 using Application.Features.Boards.Commands.AddFeedbackToCardCommand;
@@ -27,16 +28,25 @@ using Application.Features.Boards.Commands.RemoveAssignedPersonFromCardCommand;
 using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 using Application.Features.Boards.Queries.GetPersonsAllBoards;
+using Core.CrossCuttingConcerns.Exceptions.HttpExceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ApiController]
     public class BoardController : BaseController
     {
-
+        /// <summary>
+        /// Creates a board
+        /// </summary>
+        /// <param name="boardToCreateDto"></param>
+        /// <returns>A board dto with boardId</returns>
         [HttpPost("create")]
+        [ProducesResponseType(typeof(CreatedBoardDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBoard(BoardToCreateDto boardToCreateDto)
         {
             int personId = GetPersonId();
@@ -46,7 +56,16 @@ namespace WebAPI.Controllers
             return Ok(createdBoardDto);
         }
 
+
+        /// <summary>
+        /// Deletes the board with specified id
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         [HttpDelete("{boardId}/delete")]
+        [ProducesResponseType(typeof(DeletedBoardDto),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails),StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteBoard([FromRoute]int boardId)
         {
             int personId = GetPersonId();
@@ -54,8 +73,18 @@ namespace WebAPI.Controllers
             DeletedBoardDto deletedBoardDto = await Mediator.Send(deleteBoardCommand);
             return Ok(deletedBoardDto);
         }
-
+        /// <summary>
+        /// Sends an email to the invited person. InvitatonAcceptUrlPrefix should be given as a full path url for frontend.
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="invitePersonToBoardBody"></param>
+        /// <returns></returns>
+        
         [HttpPost("{boardId}/invitePersonToBoard")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails),StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> InvitePersonToBoard([FromRoute] int boardId, [FromBody] InvitePersonToBoardBody invitePersonToBoardBody)
         {
             int personId = GetPersonId();
@@ -67,8 +96,17 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
-
+        /// <summary>
+        /// The token part on the link sent the invited person's email should be given as a query parameter.
+        /// </summary>
+        /// <param name="InvitationAcceptToken"></param>
+        /// <returns></returns>
         [HttpGet("acceptInvitation")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AcceptBoardInvitation([FromQuery] string InvitationAcceptToken)
         {
             int personId = GetPersonId();
@@ -79,8 +117,16 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
-
+        /// <summary>
+        /// Adds new card to the board.
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/addCard")]
+        [ProducesResponseType(typeof(AddedCardDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AddCardToBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
@@ -91,7 +137,19 @@ namespace WebAPI.Controllers
             return Ok(addedCardDto);
         }
 
+        /// <summary>
+        /// Changes card name
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/changeName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeCardName([FromRoute] int boardId, [FromRoute] int cardId, [FromBody] string name)
         {
             int personId = GetPersonId();
@@ -101,7 +159,19 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Changes card's status
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/changeStatus")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeCardStatus([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] string status)
         {
@@ -115,7 +185,19 @@ namespace WebAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Assigns a person to the card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="assignedPersonId"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/assignPerson")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AssignPersonToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] int assignedPersonId)
         {
@@ -129,7 +211,18 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Removes assigned person from the card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/cards/{cardId}/removeAssignedPerson")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> RemoveAssignedPersonToCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
             int personId = GetPersonId();
@@ -142,7 +235,19 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Assigns due date to the card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="dueDate"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/assignDueDate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AssignDueDateToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] DateTime dueDate)
         {
@@ -156,7 +261,18 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Removes assigned date from card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/cards/{cardId}/removeAssignedDueDate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> RemoveAssignedDueDateFromCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
 
@@ -170,7 +286,18 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+
+        /// <summary>
+        /// Gets all the details of the board including persons on board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}")]
+        [ProducesResponseType(typeof(GetBoardByIdDto),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetWholeBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
@@ -179,7 +306,19 @@ namespace WebAPI.Controllers
             return Ok(getWholeBoardDto);
         }
 
+
+        /// <summary>
+        /// Adds a job to the card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/cards/{cardId}/addJob")]
+        [ProducesResponseType(typeof(AddedJobDto),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AddJobToCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
             int personId = GetPersonId();
@@ -189,7 +328,19 @@ namespace WebAPI.Controllers
             return Ok(addedJobDto);
         } 
 
+        /// <summary>
+        /// Add new feedback to the card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/addFeedback")]
+        [ProducesResponseType(typeof(AddedCardFeedbackDto),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AddFeedbackToCard([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] string content)
         {
@@ -204,7 +355,19 @@ namespace WebAPI.Controllers
             return Ok(addedCardFeedbackDto);
         }
 
+        /// <summary>
+        /// Adds new feedback to the job
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/jobs/{jobId}/addFeedback")]
+        [ProducesResponseType((typeof(AddedJobFeedbackDto)),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AddFeedbackToJob([FromRoute] int boardId, [FromRoute] int jobId,
             [FromBody] string content)
         {
@@ -219,7 +382,19 @@ namespace WebAPI.Controllers
             return Ok(addedJobFeedbackDto);
         }
 
+        /// <summary>
+        /// Changes job's description
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobId"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/jobs/{jobId}/changeDescription")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeJobDescription([FromRoute] int boardId, [FromRoute] int jobId,
             [FromBody] string description)
         {
@@ -233,7 +408,20 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Changes specified card feedback 
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="cardFeedbackId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/feedbacks/{cardFeedbackId}/changeFeedback")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeCardFeedback([FromRoute] int boardId, [FromRoute] int cardId,
             [FromRoute] int cardFeedbackId,
             [FromBody] string content)
@@ -248,7 +436,19 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Changes specified job feedback
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobFeedbackId"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/jobFeedbacks/{jobFeedbackId}/changeFeedback")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeJobFeedback([FromRoute] int boardId, 
             [FromRoute] int jobFeedbackId,
             [FromBody] string content)
@@ -263,7 +463,18 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes specified card from board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
         [HttpDelete("{boardId}/cards/{cardId}/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteCard([FromRoute] int boardId, [FromRoute] int cardId)
         {
             int personId = GetPersonId();
@@ -273,7 +484,18 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes specified job from card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardFeedbackId"></param>
+        /// <returns></returns>
         [HttpDelete("{boardId}/cardFeedbacks/{cardFeedbackId}/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteCardFeedback([FromRoute] int boardId, [FromRoute] int cardFeedbackId)
         {
             int personId = GetPersonId();
@@ -283,7 +505,18 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes specified job from card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
         [HttpDelete("{boardId}/jobs/{jobId}/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteJob([FromRoute] int boardId, [FromRoute] int jobId)
         {
             int personId = GetPersonId();
@@ -293,7 +526,18 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes specified job feedback from job
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobFeedbackId"></param>
+        /// <returns></returns>
         [HttpDelete("{boardId}/jobFeedbacks/{jobFeedbackId}/delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteJobFeedback([FromRoute] int boardId,[FromRoute] int jobFeedbackId)
         {
             int personId = GetPersonId();
@@ -303,7 +547,13 @@ namespace WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Gets all the boards of the person who is logged in
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("boards")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetPersonsBoard()
         {
             int personId = GetPersonId();
@@ -314,7 +564,19 @@ namespace WebAPI.Controllers
 
             return Ok(getPersonsBoardDtos);
         }
+
+        /// <summary>
+        /// Marks specified job as done
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/jobs/{jobId}/markAsDone")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> MarkJobAsDone([FromRoute] int boardId, [FromRoute] int jobId){
             int personId = GetPersonId();
 
@@ -323,7 +585,19 @@ namespace WebAPI.Controllers
             await Mediator.Send(markJobAsDoneCommand);
             return Ok();
         }
+
+        /// <summary>
+        /// Marks specified job as undone
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="jobId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/jobs/{jobId}/markAsUnDone")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> MarkJobAsUnDone([FromRoute] int boardId, [FromRoute] int jobId)
         {
             int personId = GetPersonId();
@@ -334,7 +608,19 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Changes the color of the specified card
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <param name="cardId"></param>
+        /// <param name="colorInHex"></param>
+        /// <returns></returns>
         [HttpPost("{boardId}/cards/{cardId}/changeColor")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeCardColor([FromRoute] int boardId, [FromRoute] int cardId,
             [FromBody] string colorInHex)
         {
@@ -350,7 +636,17 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// The person who is logged in leaves the board
+        /// </summary>
+        /// <param name="boardId"></param>
+        /// <returns></returns>
         [HttpGet("{boardId}/leave")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BusinessProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AuthorizationProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(UnauthorizedProblemDetails), StatusCodes.Status403Forbidden)]
         public async   Task<IActionResult> LeaveTable([FromRoute] int boardId)
         {
             int personId = GetPersonId();

@@ -67,7 +67,7 @@ namespace Core.CrossCuttingConcerns.Exceptions.Handlers
         protected override Task HandleException(HttpContext context, UnauthorizedException unauthorizedException)
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            string details = new AuthorizationProblemDetails(unauthorizedException.Message).AsJson();
+            string details = new UnauthorizedProblemDetails(unauthorizedException.Message).AsJson();
             return context.Response.WriteAsync(details);
         }
 

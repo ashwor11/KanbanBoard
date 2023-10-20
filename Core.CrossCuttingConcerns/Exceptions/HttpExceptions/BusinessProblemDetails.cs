@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.CrossCuttingConcerns.Exceptions.HttpExceptions
 {
-    internal class BusinessProblemDetails : ProblemDetails
+    public class BusinessProblemDetails : ProblemDetails
     {
         public BusinessProblemDetails(string detail)
         {

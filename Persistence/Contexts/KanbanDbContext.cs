@@ -19,16 +19,17 @@ public class KanbanDbContext : DbContext
     public DbSet<OperationClaim> OperationClaims { get; set; }
     public KanbanDbContext( DbContextOptions options) : base(options )
     {
-     
+        Database.EnsureCreated();
+
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
     {
-
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(KanbanDbContext).Assembly);
 
         modelBuilder.Entity<Feedback>().UseTpcMappingStrategy().HasOne(f => f.Person).WithMany()

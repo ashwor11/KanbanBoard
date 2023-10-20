@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "Kanban Board API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = "Kanban Board API", Version = "v1",
+        Description = "A WebAPI for Kanban Board",
+        
+
+        
+    });
+
+
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Type = SecuritySchemeType.Http,
@@ -56,7 +67,9 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Scheme = "bearer",
         Description = "Enter jwt token"
+
     });
+
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -72,6 +85,13 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
+
+    //creating xml documentation file
+
+    string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    string xmlPath = $"{Path.Combine(AppContext.BaseDirectory, xmlFile)}";
+
+    c.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddSignalR();

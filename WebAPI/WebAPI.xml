@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:WebAPI.Controllers.BoardController.CreateBoard(Application.Features.Boards.Dtos.BoardToCreateDto)">
+            <summary>
+            Creates a board
+            </summary>
+            <param name="boardToCreateDto"></param>
+            <returns>A board dto with boardId</returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.DeleteBoard(System.Int32)">
+            <summary>
+            Deletes the board with specified id
+            </summary>
+            <param name="boardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.InvitePersonToBoard(System.Int32,WebAPI.Controllers.BoardController.InvitePersonToBoardBody)">
+            <summary>
+            Sends an email to the invited person. InvitatonAcceptUrlPrefix should be given as a full path url for frontend.
+            </summary>
+            <param name="boardId"></param>
+            <param name="invitePersonToBoardBody"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AcceptBoardInvitation(System.String)">
+            <summary>
+            The token part on the link sent the invited person's email should be given as a query parameter.
+            </summary>
+            <param name="InvitationAcceptToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AddCardToBoard(System.Int32)">
+            <summary>
+            Adds new card to the board.
+            </summary>
+            <param name="boardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeCardName(System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes card name
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeCardStatus(System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes card's status
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AssignPersonToCard(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Assigns a person to the card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="assignedPersonId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.RemoveAssignedPersonToCard(System.Int32,System.Int32)">
+            <summary>
+            Removes assigned person from the card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AssignDueDateToCard(System.Int32,System.Int32,System.DateTime)">
+            <summary>
+            Assigns due date to the card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="dueDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.RemoveAssignedDueDateFromCard(System.Int32,System.Int32)">
+            <summary>
+            Removes assigned date from card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.GetWholeBoard(System.Int32)">
+            <summary>
+            Gets all the details of the board including persons on board
+            </summary>
+            <param name="boardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AddJobToCard(System.Int32,System.Int32)">
+            <summary>
+            Adds a job to the card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AddFeedbackToCard(System.Int32,System.Int32,System.String)">
+            <summary>
+            Add new feedback to the card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.AddFeedbackToJob(System.Int32,System.Int32,System.String)">
+            <summary>
+            Adds new feedback to the job
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobId"></param>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeJobDescription(System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes job's description
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobId"></param>
+            <param name="description"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeCardFeedback(System.Int32,System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes specified card feedback 
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="cardFeedbackId"></param>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeJobFeedback(System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes specified job feedback
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobFeedbackId"></param>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.DeleteCard(System.Int32,System.Int32)">
+            <summary>
+            Deletes specified card from board
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.DeleteCardFeedback(System.Int32,System.Int32)">
+            <summary>
+            Deletes specified job from card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardFeedbackId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.DeleteJob(System.Int32,System.Int32)">
+            <summary>
+            Deletes specified job from card
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.DeleteJobFeedback(System.Int32,System.Int32)">
+            <summary>
+            Deletes specified job feedback from job
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobFeedbackId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.GetPersonsBoard">
+            <summary>
+            Gets all the boards of the person who is logged in
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.MarkJobAsDone(System.Int32,System.Int32)">
+            <summary>
+            Marks specified job as done
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.MarkJobAsUnDone(System.Int32,System.Int32)">
+            <summary>
+            Marks specified job as undone
+            </summary>
+            <param name="boardId"></param>
+            <param name="jobId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.ChangeCardColor(System.Int32,System.Int32,System.String)">
+            <summary>
+            Changes the color of the specified card
+            </summary>
+            <param name="boardId"></param>
+            <param name="cardId"></param>
+            <param name="colorInHex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WebAPI.Controllers.BoardController.LeaveTable(System.Int32)">
+            <summary>
+            The person who is logged in leaves the board
+            </summary>
+            <param name="boardId"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
