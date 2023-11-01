@@ -29,6 +29,7 @@ using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 using Application.Features.Boards.Queries.GetPersonsAllBoards;
 using Core.CrossCuttingConcerns.Exceptions.HttpExceptions;
+using Core.Security.JWT;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -39,6 +40,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class BoardController : BaseController
     {
+        
         /// <summary>
         /// Creates a board
         /// </summary>
@@ -654,7 +656,9 @@ namespace WebAPI.Controllers
             { LeaveBoardDto = new() { BoardId = boardId }, PersonId = personId };
             await Mediator.Send(leaveBoardCommand);
             return Ok();
-        }   
+        }
+
+       
 
 
 

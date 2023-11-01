@@ -9,6 +9,7 @@
     <DocumentationFile>WebAPI.xml</DocumentationFile>
     <UserSecretsId>085d7ed6-4ddd-4981-97d6-5d0c55e8b333</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

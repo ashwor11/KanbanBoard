@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Reflection;
+using Persistence.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,11 @@ builder.Services.AddControllers(options =>
 {
     options.AllowEmptyInputInBodyModelBinding = true;
 });
+
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 builder.Services.AddCoreCCSServiceRegistration(builder.Configuration);
 builder.Services.AddCoreSecurityService(builder.Configuration);
@@ -108,23 +114,26 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
+
+
 var app = builder.Build();
 
+var serviceScope = app.Services.CreateScope();
+
+var context = serviceScope.ServiceProvider.GetRequiredService<KanbanDbContext>();
+
+context.Database.EnsureCreated();
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
-if (app.Environment.IsDevelopment())
-    app.ConfigureCustomExceptionMiddleware();
+app.ConfigureCustomExceptionMiddleware();
 
 
 
 
-
-app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors("CorsPolicy");

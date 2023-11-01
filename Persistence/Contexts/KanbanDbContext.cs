@@ -19,7 +19,7 @@ public class KanbanDbContext : DbContext
     public DbSet<OperationClaim> OperationClaims { get; set; }
     public KanbanDbContext( DbContextOptions options) : base(options )
     {
-        Database.EnsureCreated();
+        
 
     }
 
