@@ -1,7 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Rules;
-using Application.Pipelines.BoardUpdateEvent;
 using Application.Repositories;
 using AutoMapper;
 using Core.Application.Pipelines.Validation;
