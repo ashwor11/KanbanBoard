@@ -3,12 +3,15 @@ using Core.CrossCuttingConcerns;
 using Core.CrossCuttingConcerns.Exceptions;
 using Core.Security;
 using Core.Security.Encryption.Helpers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Reflection;
+using System.Text.Json;
+using Infrastructure;
 using Persistence.Contexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,8 @@ builder.Services.AddControllers(options =>
 });
 
 
+
+
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
@@ -28,6 +33,7 @@ builder.Services.AddCoreCCSServiceRegistration(builder.Configuration);
 builder.Services.AddCoreSecurityService(builder.Configuration);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors(options =>options.AddPolicy("CorsPolicy",
@@ -110,23 +116,15 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 
-
-
-
-
-
-
 var app = builder.Build();
 
+//For docker container, create the database if it isn't created before
 var serviceScope = app.Services.CreateScope();
-
 var context = serviceScope.ServiceProvider.GetRequiredService<KanbanDbContext>();
-
 context.Database.EnsureCreated();
 
-// Configure the HTTP request pipeline.
 
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI();
 
 app.ConfigureCustomExceptionMiddleware();
@@ -143,6 +141,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseWhen(_ => _.Request.Path.StartsWithSegments("/api/board") & !_.Request.Path.StartsWithSegments("/api/board/subscribe"), appBuilder =>
+{
+    appBuilder.UseMiddleware<BoardUpdaterMiddleware>();
+});
 
 
 

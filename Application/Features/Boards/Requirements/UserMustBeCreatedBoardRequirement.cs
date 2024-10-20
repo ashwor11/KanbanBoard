@@ -25,7 +25,7 @@ public class UserMustBeCreatedBoardRequirement : IAuthorizationRequirement
             if (board.CreatorUserId!= requirement.PersonId)
                 return AuthorizationResult.Fail("You are not authorized to this operation on this board.");
 
-            return AuthorizationResult.Succeed();
+            return AuthorizationResult.Fail();
         }
     }
 }

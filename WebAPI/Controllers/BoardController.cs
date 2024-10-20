@@ -28,8 +28,10 @@ using Application.Features.Boards.Commands.RemoveAssignedPersonFromCardCommand;
 using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 using Application.Features.Boards.Queries.GetPersonsAllBoards;
+using Application.Services.Interfaces;
 using Core.CrossCuttingConcerns.Exceptions.HttpExceptions;
 using Core.Security.JWT;
+using Infrastructure.SSE.BoardUpdate;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -40,7 +42,16 @@ namespace WebAPI.Controllers
     [ApiController]
     public class BoardController : BaseController
     {
-        
+        private readonly IBoardConnectionManager _boardConnectionManager;
+        private readonly IEventPublisher _eventPublisher;
+
+
+        public BoardController(IBoardConnectionManager boardConnectionManager, IEventPublisher eventPublisher)
+        {
+            _boardConnectionManager = boardConnectionManager;
+            _eventPublisher = eventPublisher;
+        }
+
         /// <summary>
         /// Creates a board
         /// </summary>
@@ -132,7 +143,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> AddCardToBoard([FromRoute] int boardId)
         {
             int personId = GetPersonId();
-            AddCartToBoardCommand addCartToBoardCommand =
+            AddCardToBoardCommand addCartToBoardCommand =
                 new() { CardToAddDto = new() { BoardId = boardId }, PersonId = personId };
             AddedCardDto addedCardDto = await Mediator.Send(addCartToBoardCommand);
 
@@ -656,6 +667,32 @@ namespace WebAPI.Controllers
             { LeaveBoardDto = new() { BoardId = boardId }, PersonId = personId };
             await Mediator.Send(leaveBoardCommand);
             return Ok();
+        }
+
+        [HttpGet("subscribe/{boardId}")]
+        public async Task Subscribe(int boardId, CancellationToken cancellationToken)
+        {
+            var response = Response;
+            response.Headers.Add("Content-Type", "text/event-stream");
+            response.Headers.Add("Cache-Control", "no-cache");
+            response.Headers.Add("Connection", "keep-alive");
+
+            var boardConnection = new BoardConnectionImplementation(Guid.NewGuid().ToString(), boardId, response.Body);
+            _boardConnectionManager.AddConnection(boardId, boardConnection);
+
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+                    await response.WriteAsync("data: keepalive\n\n");
+                    await response.Body.FlushAsync();
+                }
+            }
+            finally
+            {
+                _boardConnectionManager.RemoveConnection(boardId, boardConnection.ConnectionId);
+            }
         }
 
        

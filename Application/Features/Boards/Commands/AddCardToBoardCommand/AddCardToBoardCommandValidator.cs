@@ -2,9 +2,9 @@
 
 namespace Application.Features.Boards.Commands.AddCartToBoardCommand;
 
-public class AddCartToBoardCommandValidator : AbstractValidator<AddCartToBoardCommand>
+public class AddCardToBoardCommandValidator : AbstractValidator<AddCardToBoardCommand>
 {
-    public AddCartToBoardCommandValidator()
+    public AddCardToBoardCommandValidator()
     {
         RuleFor(x=>x.CardToAddDto.BoardId).NotEmpty().NotNull();
     }

@@ -3,9 +3,9 @@ using MediatR.Behaviors.Authorization;
 
 namespace Application.Features.Boards.Commands.AddCartToBoardCommand;
 
-public class AddCartToBoardCommandAuthorizer : AbstractRequestAuthorizer<AddCartToBoardCommand>
+public class AddCardToBoardCommandAuthorizer : AbstractRequestAuthorizer<AddCardToBoardCommand>
 {
-    public override void BuildPolicy(AddCartToBoardCommand request)
+    public override void BuildPolicy(AddCardToBoardCommand request)
     {
         UseRequirement(new PersonMustBeAMemberOfBoardRequirement()
         {

@@ -12,7 +12,7 @@ public class BoardRepository : EfRepositoryBase<KanbanDbContext, Board>, IBoardR
     {
     }
 
-    public async Task<Board> GetWholeBoardAsync(int boardId)
+    public async Task<Board> GetWholeBoardAsync(int? boardId)
     {
         Board board = await GetAsync(x => x.Id == boardId,
             include: x =>
@@ -20,7 +20,8 @@ public class BoardRepository : EfRepositoryBase<KanbanDbContext, Board>, IBoardR
         return board;
     }
 
-    public async Task<Board> GetBoardWithCardsAsync(int boardId)
+
+    public async Task<Board> GetBoardWithCardsAsync(int ?boardId)
     {
         Board board = await GetAsync(x => x.Id == boardId,
             include: x =>

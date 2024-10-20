@@ -3,7 +3,7 @@ using MediatR.Behaviors.Authorization;
 
 namespace Application.Features.Boards.Queries.GetBoardAsWholeCommand;
 
-public class GetBoardAsWholeCommandAuthorizer : AbstractRequestAuthorizer<GetBoardAsWholeQuery>
+public class GetBoardAsWholeQueryAuthorizer : AbstractRequestAuthorizer<GetBoardAsWholeQuery>
 {
     public override void BuildPolicy(GetBoardAsWholeQuery request)
     {

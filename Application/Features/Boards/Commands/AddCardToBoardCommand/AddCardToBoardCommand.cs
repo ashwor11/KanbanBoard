@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Application.Features.Boards.Dtos;
 using Application.Features.Boards.Rules;
+using Application.Pipelines.BoardUpdateEvent;
 using Application.Repositories;
 using AutoMapper;
 using Core.Application.Pipelines.Validation;
@@ -9,12 +10,12 @@ using MediatR;
 
 namespace Application.Features.Boards.Commands.AddCartToBoardCommand;
 
-public class AddCartToBoardCommand : IRequest<AddedCardDto>, IValidationRequest
+public class AddCardToBoardCommand : IRequest<AddedCardDto>, IValidationRequest
 {
     public CardToAddDto CardToAddDto { get; set; }
     public int PersonId { get; set; }
 
-    public class AddCartToBoardCommandHandler : IRequestHandler<AddCartToBoardCommand,AddedCardDto>
+    public class AddCartToBoardCommandHandler : IRequestHandler<AddCardToBoardCommand,AddedCardDto>
     {
         private readonly IBoardRepository _boardRepository;
         private readonly BoardBusinessRules _boardBusinessRules;
@@ -27,7 +28,7 @@ public class AddCartToBoardCommand : IRequest<AddedCardDto>, IValidationRequest
             _mapper = mapper;
         }
 
-        public async Task<AddedCardDto> Handle(AddCartToBoardCommand request, CancellationToken cancellationToken)
+        public async Task<AddedCardDto> Handle(AddCardToBoardCommand request, CancellationToken cancellationToken)
         {
             Board board = await _boardRepository.GetWholeBoardAsync(request.CardToAddDto.BoardId);
             _boardBusinessRules.DoesBoardExist(board);
